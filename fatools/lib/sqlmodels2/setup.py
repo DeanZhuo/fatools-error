@@ -1,10 +1,8 @@
-
-
 from fatools.lib.utils import cout, cerr
 from fatools.lib.params import default_markers, default_panels
 
-def setup(dbh):
 
+def setup(dbh):
     session = dbh.session()
 
     # create default markers
@@ -24,11 +22,8 @@ def setup(dbh):
         session.add(panel)
 
     # create default batch (for bin holder)
-    batch = dbh.Batch( code = 'default' )
+    batch = dbh.Batch(code='default')
     batch.fsa_provider = ''
     batch.species = 'X'
     cerr("I: batch 'default' created.")
     session.add(batch)
-
-
-

@@ -12,16 +12,14 @@ import os, pickle
 
 
 class Marker(MarkerMixIn):
-
     __slots__ = []
 
     container = {}
 
     @classmethod
     def upload(cls, d):
-        for (k,v) in d.items():
+        for (k, v) in d.items():
             cls.container[k] = cls.from_dict(v)
-
 
     @classmethod
     def get_marker(cls, marker_code, species='x'):
@@ -31,19 +29,16 @@ class Marker(MarkerMixIn):
 
 
 class Panel(PanelMixIn):
-
     __slots__ = []
 
     container = {}
 
     Marker = Marker
 
-
     @classmethod
     def upload(cls, d):
-        for (k,v) in d.items():
+        for (k, v) in d.items():
             cls.container[k] = cls.from_dict(v)
-
 
     @classmethod
     def get_panel(cls, panel_code):
@@ -51,11 +46,10 @@ class Panel(PanelMixIn):
 
 
 class Allele(AlleleMixIn):
-
     __slots__ = []
 
     def __init__(self, rtime, rfu, area, brtime, ertime, wrtime, srtime,
-                    beta, theta, omega):
+                 beta, theta, omega):
         self.rtime = rtime
         self.rfu = rfu
         self.area = area
@@ -73,7 +67,6 @@ class Allele(AlleleMixIn):
 
 
 class Channel(ChannelMixIn):
-
     __slots__ = []
 
     Allele = Allele
@@ -89,16 +82,13 @@ class Channel(ChannelMixIn):
 
         self.assign()
 
-
     def add_allele(self, allele):
         self.alleles.append(allele)
         return allele
 
 
-
 class FSA(FSAMixIn):
-
-    __slots__ = [ '_fhdl', '_trace' ]
+    __slots__ = ['_fhdl', '_trace']
 
     Channel = Channel
 

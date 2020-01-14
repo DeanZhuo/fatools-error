@@ -1,4 +1,3 @@
-
 from fatools.lib.analytics.export import export_arlequin
 from fatools.lib.utils import cerr, cout
 from subprocess import call
@@ -9,7 +8,7 @@ import numpy as np
 
 class ArlequinResult(object):
 
-    def __init__( self, analytical_sets, output, error = None):
+    def __init__(self, analytical_sets, output, error=None):
         self.output = output
         self.error = error
         self.analytical_sets = analytical_sets
@@ -21,8 +20,7 @@ class ArlequinResult(object):
     def get_labels(self):
         items = list(self.labels.items())
         items.sort()
-        return [ e[1] for e in items ]
-
+        return [e[1] for e in items]
 
     def parse(self):
         """ parse the output and create a table """
@@ -41,12 +39,12 @@ class ArlequinResult(object):
         while lines[idx]:
             tokens = lines[idx].split(':', 1)
             if len(tokens) == 2:
-                self.labels[ int(tokens[0]) ] = tokens[1].strip()
+                self.labels[int(tokens[0])] = tokens[1].strip()
             idx += 1
 
         # prepares Fst Matrix
 
-        self.fst_m = [ [ None ] * len(self.labels) for i in range( len(self.labels) ) ]
+        self.fst_m = [[None] * len(self.labels) for i in range(len(self.labels))]
 
         while not lines[idx].startswith('Distance method:'):
             idx += 1
@@ -57,7 +55,7 @@ class ArlequinResult(object):
         for i in range(len(self.labels)):
             tokens = lines[idx].split()
             for j in range(len(tokens) - 1):
-                self.fst_m[i][j] = tokens[j+1]
+                self.fst_m[i][j] = tokens[j + 1]
             self.fst_m[i][i] = '*'
             idx += 1
 
@@ -71,28 +69,28 @@ class ArlequinResult(object):
         for i in range(len(self.labels)):
             tokens = lines[idx].split()
             for j in range(len(tokens) - 1):
-                self.fst_m[j][i] = tokens[j+1]
+                self.fst_m[j][i] = tokens[j + 1]
             idx += 1
 
 
-def standardized_fst( fst_orig, fst_max ):
+def standardized_fst(fst_orig, fst_max):
     """ return standard FST, obtained by dividing FST with FSTmax, ie
         FST(i,j)/FSTmax(i,j)
     """
 
     # check consistency
-    if (    (fst_orig.analytical_sets != fst_max.analytical_sets) or
-            (fst_orig.labels != fst_max.labels) ):
-        raise RuntimeError( 'FST original and maximum are not in the same dataset' )
+    if ((fst_orig.analytical_sets != fst_max.analytical_sets) or
+            (fst_orig.labels != fst_max.labels)):
+        raise RuntimeError('FST original and maximum are not in the same dataset')
 
-    fst_std = ArlequinResult( fst_orig.analytical_sets, None )
+    fst_std = ArlequinResult(fst_orig.analytical_sets, None)
     fst_std.labels = fst_orig.labels
-    #fst_std.analytical_sets = fst_orig.analytical_sets
+    # fst_std.analytical_sets = fst_orig.analytical_sets
 
-    fst_std.fst_m = [ [ '*' ] * len(fst_std.labels) for i in range( len(fst_std.labels) ) ]
+    fst_std.fst_m = [['*'] * len(fst_std.labels) for i in range(len(fst_std.labels))]
 
-    for i in range( len( fst_std.labels ) ):
-        for j in range( i ):
+    for i in range(len(fst_std.labels)):
+        for j in range(i):
             if float(fst_max.fst_m[i][j]) == 0:
                 fst_std.fst_m[i][j] = np.nan
             else:
@@ -101,26 +99,24 @@ def standardized_fst( fst_orig, fst_max ):
     return fst_std
 
 
-
 def run_arlequin(analytical_sets, dbh, tmp_dir, recode=False):
-
     filename = 'genaf-recoded' if recode else 'genaf'
 
     arp_file = '%s/%s.arp' % (tmp_dir, filename)
     ars_file = '%s/%s.ars' % (tmp_dir, filename)
 
     with open(arp_file, 'wt') as f:
-        export_arlequin( analytical_sets, dbh, f, recode )
+        export_arlequin(analytical_sets, dbh, f, recode)
     with open(ars_file, 'wt') as f:
-        f.write( ars_content )
+        f.write(ars_content)
 
     # run and wait until finish -> arlecore should be fast enough anyway
     cerr('Running arlecore in directory: %s' % tmp_dir)
-    call(['arlecore', arp_file, ars_file], cwd = tmp_dir)
+    call(['arlecore', arp_file, ars_file], cwd=tmp_dir)
 
-    result = ArlequinResult( analytical_sets,
-        output = open('%s/%s.res/%s.htm' % (tmp_dir, filename, filename)).read(),
-    )
+    result = ArlequinResult(analytical_sets,
+                            output=open('%s/%s.res/%s.htm' % (tmp_dir, filename, filename)).read(),
+                            )
 
     return result
 
@@ -680,7 +676,8 @@ SignLevelPopDiff=0.050000
 
 DetectSelectedLoci=0
 
-#UseHierarchicalIslandModel controls if a hierarchical island model should be used to generate the null distribution of FST
+#UseHierarchicalIslandModel controls if a hierarchical island model should be used to generate the null distribution 
+of FST 
 
 UseHierarchicalIslandModel=0
 
@@ -704,18 +701,21 @@ UseSimFileForFDist2=0
 
 SimFileNameForFDist2=
 
-#TargetHetLowBound is the target LOW bound for simulated heterozagosity in the coalescent simulations under a finite island model
-#Target simulated heterozygostiy is dawn as uniform between low_bound and high_bound and theta value is taken from the relation Het=theta/(1+theta)
+#TargetHetLowBound is the target LOW bound for simulated heterozagosity in the coalescent simulations under a finite 
+island model #Target simulated heterozygostiy is dawn as uniform between low_bound and high_bound and theta value is 
+taken from the relation Het=theta/(1+theta) 
 
 TargetHetLowBound=0.000000
 
-#TargetHetHighBound is the target HIGH bound for simulated heterozagosity in the coalescent simulations under a finite island model
-#Target simulated heterozygostiy is dawn as uniform between low_bound and high_bound and theta value is taken from the relation Het=theta/(1+theta)
+#TargetHetHighBound is the target HIGH bound for simulated heterozagosity in the coalescent simulations under a 
+finite island model #Target simulated heterozygostiy is dawn as uniform between low_bound and high_bound and theta 
+value is taken from the relation Het=theta/(1+theta) 
 
 TargetHetHighBound=1.000000
 
-#MinDafFreq is the minimum frequency of the simulated derived allele. It is used to implement soem form of ascertainment bias
-#It is only relevant for diallelic markers, like DNA (SNP) and RFLP data. A value of zero implies no bias.
+#MinDafFreq is the minimum frequency of the simulated derived allele. It is used to implement soem form of 
+ascertainment bias #It is only relevant for diallelic markers, like DNA (SNP) and RFLP data. A value of zero implies 
+no bias. 
 
 MinDafFreq=0.000000
 

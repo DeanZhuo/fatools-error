@@ -1,5 +1,3 @@
-
-
 class peaktype(object):
     scanned = 'scanned'
     broad = 'broad'
@@ -15,19 +13,19 @@ class peaktype(object):
 
 
 class channelstatus(object):
-    unassigned = 'unassigned'   # dye is used in panel, but not in this channel
-    assigned = 'assigned'       # channel is assigned to a marker
-    unused = 'unused'           # dye is unused in panel
+    unassigned = 'unassigned'  # dye is used in panel, but not in this channel
+    assigned = 'assigned'  # channel is assigned to a marker
+    unused = 'unused'  # dye is unused in panel
     noisy = 'noisy'
     empty = 'empty'
-    reseted = 'reseted'         # channel is reseted (created empty)
+    reseted = 'reseted'  # channel is reseted (created empty)
     scanned = 'scanned'
     preannotated = 'preannotated'
-    aligned = 'aligned'         # ladder peaks has been aligned to standard size
+    aligned = 'aligned'  # ladder peaks has been aligned to standard size
     called = 'called'
     binned = 'binned'
     annotated = 'annotated'
-    ladder = 'ladder'           # channel is used for ladder
+    ladder = 'ladder'  # channel is used for ladder
 
 
 class assaystatus(object):
@@ -65,8 +63,8 @@ class alignmethod(object):
 
 class scanningmethod(object):
     notapplicable = 'notapplicable'
-    cwt = 'cwt'     # CWT-based from scipy
-    pd = 'pd'       # peak detection from peakutils
+    cwt = 'cwt'  # CWT-based from scipy
+    pd = 'pd'  # peak detection from peakutils
 
 
 class allelemethod(object):
@@ -82,45 +80,44 @@ class binningmethod(object):
     semiauto = 'semiauto'
 
 
-dyes = [ '6-FAM', 'NED', 'VIC', 'PET', 'LIZ' ]
+dyes = ['6-FAM', 'NED', 'VIC', 'PET', 'LIZ']
 
-ladders = { 'LIZ600': { 'dye': 'LIZ',
-                        'sizes': [ 20.0, 40.0, 60.0, 80.0, 100.0, 114.0, 120.0, 140.0, 160.0,
-                        180.0, 200.0, 214.0, 220.0, 240.0, 250.0, 260.0, 280.0, 300.0,
-                        314.0, 320.0, 340.0, 360.0, 380.0, 400.0, 414.0, 420.0, 440.0,
-                        460.0, 480.0, 500.0, 514.0, 520.0, 540.0, 560.0, 580.0, 600.0 ],
-                        'strict': {
-                            'max_rss': 40.0,
-                            'min_dpscore': 34.0,
-                            'min_sizes': 36
-                        },
-                        'relax': {
-                            'max_rss': 56.25,
-                            'min_dpscore': 33.0,
-                            'min_sizes': 36
-                        },
-                        'k': 6,
-                        'a': 2,
-                        'signature': [ 140, 160, 180, 200, 214, 220, 240, 250, 260, 280, 300, 314, 320 ],
-                        'order': 3,
-                    },
-            'LIZ500': { 'dye': 'LIZ',
-                        'sizes': [ 35, 50, 75, 100, 139, 150, 160, 200, 250, 300, 340, 350,
-                        400, 450, 490, 500 ],
-                        'strict': {
-                            'max_rss': 17.5,
-                            'min_dpscore': 14.0,
-                            'min_sizes': 16
-                        },
-                        'relax': {
-                            'max_rss': 25.0,
-                            'min_dpscore': 13.0,
-                            'min_sizes': 16
-                        },
-                        'k': 4,
-                        'a': 1,
-                        'signature': [ 75, 100, 139, 150, 160, 200, 250 ],
-                        'order': 2,
-                    },
-}
-
+ladders = {'LIZ600': {'dye': 'LIZ',
+                      'sizes': [20.0, 40.0, 60.0, 80.0, 100.0, 114.0, 120.0, 140.0, 160.0,
+                                180.0, 200.0, 214.0, 220.0, 240.0, 250.0, 260.0, 280.0, 300.0,
+                                314.0, 320.0, 340.0, 360.0, 380.0, 400.0, 414.0, 420.0, 440.0,
+                                460.0, 480.0, 500.0, 514.0, 520.0, 540.0, 560.0, 580.0, 600.0],
+                      'strict': {
+                          'max_rss': 40.0,
+                          'min_dpscore': 34.0,
+                          'min_sizes': 36
+                      },
+                      'relax': {
+                          'max_rss': 56.25,
+                          'min_dpscore': 33.0,
+                          'min_sizes': 36
+                      },
+                      'k': 6,
+                      'a': 2,
+                      'signature': [140, 160, 180, 200, 214, 220, 240, 250, 260, 280, 300, 314, 320],
+                      'order': 3,
+                      },
+           'LIZ500': {'dye': 'LIZ',
+                      'sizes': [35, 50, 75, 100, 139, 150, 160, 200, 250, 300, 340, 350,
+                                400, 450, 490, 500],
+                      'strict': {
+                          'max_rss': 17.5,
+                          'min_dpscore': 14.0,
+                          'min_sizes': 16
+                      },
+                      'relax': {
+                          'max_rss': 25.0,
+                          'min_dpscore': 13.0,
+                          'min_sizes': 16
+                      },
+                      'k': 4,
+                      'a': 1,
+                      'signature': [75, 100, 139, 150, 160, 200, 250],
+                      'order': 2,
+                      },
+           }

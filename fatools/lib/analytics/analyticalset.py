@@ -1,8 +1,8 @@
-
 from collections import defaultdict
 from fatools.lib.analytics.dataframes import AlleleDataFrame
 from pandas import pivot_table
 from pprint import pprint
+
 
 class AnalyticalSet(object):
     """ AnalyticalSet
@@ -22,10 +22,10 @@ class AnalyticalSet(object):
         self._marker_ids = marker_ids
 
         self._allele_df = AlleleDataFrame(dbh,
-                    sample_ids = self.sample_ids,
-                    marker_ids = marker_ids,
-                    params = params
-            )
+                                          sample_ids=self.sample_ids,
+                                          marker_ids=marker_ids,
+                                          params=params
+                                          )
 
         # placeholder
 
@@ -37,7 +37,6 @@ class AnalyticalSet(object):
 
         self._sample_genotyped_dist = None
         self._marker_genotyped_dist = None
-
 
     @property
     def label(self):
@@ -76,21 +75,21 @@ class AnalyticalSet(object):
             where value = number of alleles in the marker for this particular sample
         """
         if self._marker_df is None:
-            self._marker_df = pivot_table( self._allele_df.df,
-                    index = 'sample_id', columns = 'marker_id', values='value', aggfunc = len )
+            self._marker_df = pivot_table(self._allele_df.df,
+                                          index='sample_id', columns='marker_id', values='value', aggfunc=len)
         return self._marker_df
 
     @property
     def sample_marker(self):
         if self._sample_marker is None:
             self._sample_marker = {}
-            for (idx, marker_id, sample_id, value, size, height, assay_id, allele_id, ratio, rank) in self.allele_df.df.itertuples():
+            for (idx, marker_id, sample_id, value, size, height, assay_id, allele_id, ratio,
+                 rank) in self.allele_df.df.itertuples():
                 try:
-                    self._sample_marker[sample_id].add( marker_id )
+                    self._sample_marker[sample_id].add(marker_id)
                 except KeyError:
-                    self._sample_marker[sample_id] = { marker_id }   # create initial set
+                    self._sample_marker[sample_id] = {marker_id}  # create initial set
         return self._sample_marker
-
 
     def get_filtered_sample_ids(self):
         """ get sample_ids that passed sample quality assessment """
@@ -106,10 +105,9 @@ class AnalyticalSet(object):
                 # monoclonal samples
 
                 sample_mult = self.allele_df.sample_multiplicity
-                monoclonal_ids = set( int(x) for x in
-                                    sample_mult[sample_mult == 1].index.values )
+                monoclonal_ids = set(int(x) for x in
+                                     sample_mult[sample_mult == 1].index.values)
                 self._filtered_sample_ids = self._filtered_sample_ids & monoclonal_ids
-
 
             elif sample_filtering == 'S':
                 # strict / low-complexity samples
@@ -117,19 +115,18 @@ class AnalyticalSet(object):
                 # get sample_ids from strict / low_complexity samples
                 locus_mult = self.allele_df.locus_multiplicity
                 locus_mult_dist = locus_mult.sum(1)
-                low_complex_ids = set( int(x) for x in
-                                    locus_mult_dist[locus_mult_dist <= 1].index.values )
+                low_complex_ids = set(int(x) for x in
+                                      locus_mult_dist[locus_mult_dist <= 1].index.values)
                 self._filtered_sample_ids = self._filtered_sample_ids & low_complex_ids
 
             elif sample_filtering == 'U':
                 # only unique haplotype samples
 
                 # get index from unique haplotypes
-                unique_ids = set( int(x) for x in self.allele_df.unique_mlgt.index.values )
+                unique_ids = set(int(x) for x in self.allele_df.unique_mlgt.index.values)
                 self._filtered_sample_ids = self._filtered_sample_ids & unique_ids
 
         return self._filtered_sample_ids
-
 
     def get_filtered_marker_ids(self):
         """ get marker_ids that passed marker quality assessment """
@@ -137,38 +134,34 @@ class AnalyticalSet(object):
             self._filtered_marker_ids, self._marker_genotyped_dist = self.assess_marker_quality()
         return self._filtered_marker_ids
 
-
     def get_sample_genotyped_distribution(self):
         if self._sample_genotyped_dist is None:
             self.get_filtered_sample_ids()
         return self._sample_genotyped_dist
-
 
     def get_marker_genotyped_distribution(self):
         if self._marker_genotyped_dist is None:
             self.get_filtered_marker_ids()
         return self._marker_genotyped_dist
 
-
-    def assess_sample_quality(self, sample_qual_threshold = -1):
+    def assess_sample_quality(self, sample_qual_threshold=-1):
         """ assess sample based on successful genotyped markers
             param: sample_qual_threshold
         """
 
-        sample_quality = [ (s_id, len(m)) for s_id, m in self.sample_marker.items() ]
-        genotyped_dist = [ x[1] for x in sample_quality ]
-        #n = max(genotyped_dist)
+        sample_quality = [(s_id, len(m)) for s_id, m in self.sample_marker.items()]
+        genotyped_dist = [x[1] for x in sample_quality]
+        # n = max(genotyped_dist)
         n = len(self.marker_ids)
         if sample_qual_threshold < 0:
             sample_qual_threshold = self._params.sample_qual_threshold
         threshold = n * sample_qual_threshold
-        passed_sample_ids = set([ int(x[0]) for x in sample_quality if x[1] >= threshold ])
-        #failed_samples = len(sample_quality) - len(passed_sample_ids)
+        passed_sample_ids = set([int(x[0]) for x in sample_quality if x[1] >= threshold])
+        # failed_samples = len(sample_quality) - len(passed_sample_ids)
 
-        return (passed_sample_ids, genotyped_dist)
+        return passed_sample_ids, genotyped_dist
 
-
-    def assess_marker_quality(self, marker_qual_threshold = -1):
+    def assess_marker_quality(self, marker_qual_threshold=-1):
         """ assess marker based on successful genotyped samples, which must be done on
             all samples!!
             param: marker_qual_threshold
@@ -180,14 +173,13 @@ class AnalyticalSet(object):
             for m in self.marker_df.get(marker_id, [0]):
                 if m > 0:
                     genotyped += 1
-            marker_genotyped.append( (marker_id, genotyped) )
+            marker_genotyped.append((marker_id, genotyped))
 
         if marker_qual_threshold < 0:
             marker_qual_threshold = self._params.marker_qual_threshold
         threshold = len(self.sample_ids) * marker_qual_threshold
-        passed_marker_ids = set([ x[0] for x in marker_genotyped if x[1] >= threshold ])
-        return (passed_marker_ids, marker_genotyped)
-
+        passed_marker_ids = set([x[0] for x in marker_genotyped if x[1] >= threshold])
+        return passed_marker_ids, marker_genotyped
 
     def get_filtered_analytical_set(self, sample_ids=None, marker_ids=None):
 
@@ -208,78 +200,64 @@ class AnalyticalSetContainer(list):
         self._marker_ids = set(marker_ids) if marker_ids else None
         for s in self._sample_sets:
             if len(s) <= 0: continue
-            a_set = AnalyticalSet( s, params, marker_ids, dbh )
-            self.append( a_set )
+            a_set = AnalyticalSet(s, params, marker_ids, dbh)
+            self.append(a_set)
             self._total_samples += s.N
-            self._sample_ids.update( s.sample_ids )
+            self._sample_ids.update(s.sample_ids)
 
             # checking marker_ids consistency
             if not self._marker_ids:
                 self._marker_ids = set(a_set.marker_ids)
-            elif (self._marker_ids ^ set(a_set.marker_ids)):
+            elif self._marker_ids ^ set(a_set.marker_ids):
                 raise RuntimeError(
                     'Inconsistence marker set for sample set: %s' % a_set.label)
 
-
     def get_sample_sets(self):
         return self._sample_sets
-
 
     def get_filtered_sample_ids(self):
         """ return a filtered sample_ids, ie sample with minimum number of marker """
         sample_ids = set()
         for s in self:
-            sample_ids.update( s.get_filtered_sample_ids() )
+            sample_ids.update(s.get_filtered_sample_ids())
         return sample_ids
-
 
     def get_filtered_marker_ids(self):
         """ return a filtered marker_ids from total of all analytical sets """
         marker_counts = self.assess_marker_quality()
         threshold = self.total_samples * self._params.marker_qual_threshold
-        marker_ids = [ x[0] for x in marker_counts.items() if x[1] > threshold ]
+        marker_ids = [x[0] for x in marker_counts.items() if x[1] > threshold]
         return marker_ids
-
 
     def assess_marker_quality(self):
         """ assess marker quality """
         # collect all necessary data from each analyticalset
-        marker_counts = defaultdict( int )
+        marker_counts = defaultdict(int)
         for s in self:
             for (marker_id, count) in s.get_marker_genotyped_distribution():
                 marker_counts[marker_id] += count
 
         return marker_counts
 
-
     def get_filtered_analytical_sets(self):
         """ return a filtered analytical set container """
         raise NotImplementedError
-
 
     @property
     def total_samples(self):
         return self._total_samples
 
-
     @property
     def sample_ids(self):
         return self._sample_ids
-
 
     @property
     def marker_ids(self):
         return self._marker_ids
 
 
-
 def get_analytical_sets(dbh, sample_sets, params, marker_ids=None):
-
     assert sample_sets and params
-    sets = AnalyticalSetContainer( sample_sets, params, marker_ids, dbh )
+    sets = AnalyticalSetContainer(sample_sets, params, marker_ids, dbh)
 
     return sets
-
-
-
-

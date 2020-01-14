@@ -1,12 +1,12 @@
 # traceio.py
-'''
+"""
 Copyright (C) 2004-2015 Hidayat Trimarsanto <anto@eijkman.go.id>
 Eijkman Institute for Molecular Biology
 
 This module is part of seqpy, a set of python scripts for sequence processing
 and is released under GNU General Public License version 3 or later:
 http://www.gnu.org/licenses/gpl.html
-'''
+"""
 
 __version__ = '20081006a'
 
@@ -20,16 +20,17 @@ from .traceutils import smooth_signal, correct_baseline
 
 DEBUG = False
 
-def D( text ):
+
+def D(text):
     if DEBUG:
         print(text, file=sys.stderr, flush=True)
+
 
 def b(txt):
     return txt.encode('ASCII')
 
 
-
-#---------------------------- ABIF format -------------------------------#
+# ---------------------------- ABIF format -------------------------------#
 #
 # specs: http://www6.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf
 #
@@ -44,20 +45,20 @@ abitypes = {
     5: '>%dl',
     7: '>%df',
     8: '>%dd',
-    #10: '4s',
+    # 10: '4s',
     10: '>1h2B',
     11: '>4B',
     13: '%ds',
     1024: '%ds'
-    }
+}
 
 abitags = {
     b'GELP1': 2,
     b'PCON1': 201
 }
 
-
 abif_direntry = '>4slhhll4sl'
+
 
 class ABIF_DirEntry(object):
 
@@ -79,9 +80,9 @@ class ABIF_DirEntry(object):
         return self.data
 
     def __repr__(self):
-        if self.etype in [ 18, 19]:
+        if self.etype in [18, 19]:
             return '<ABIF etype: %s, data: "%s">' % (self.etype, self.data)
-        elif self.num < 10 and self.etype not in [10,11]:
+        elif self.num < 10 and self.etype not in [10, 11]:
             return '<ABIF etype: %s, data: %s>' % (self.etype, str(self.data))
         return '<ABIF etype: %s, size: %d>' % (self.etype, self.num)
 
@@ -96,8 +97,8 @@ class ABIF_Channel(object):
 
     def smooth(self):
         """ return savitsky-golay transformation of raw data """
-        if  self._smooth is None:
-            self._smooth = correct_baseline( smooth_signal( self.raw ) )
+        if self._smooth is None:
+            self._smooth = correct_baseline(smooth_signal(self.raw))
         return self._smooth
 
 
@@ -135,23 +136,26 @@ class ABIF(object):
         return t
 
     def get_channels(self):
-    # return a list of [ 'dye name', dye_wavelength, numpy_array, numpy_smooth ]
+        # return a list of [ 'dye name', dye_wavelength, numpy_array, numpy_smooth ]
 
         results = {}
-        for (idx, data_idx) in [ (1,1), (2,2), (3,3), (4,4), (5,105) ]:
+        for (idx, data_idx) in [(1, 1), (2, 2), (3, 3), (4, 4), (5, 105)]:
             try:
                 dye_name = self.get_data(b('DyeN%d' % idx)).decode('ASCII')
                 # below is to workaround on some strange dye name
-                if dye_name == '6FAM': dye_name = '6-FAM'
-                elif dye_name == 'PAT': dye_name = 'PET'
-                elif dye_name == 'Bn Joda': dye_name = 'LIZ'
+                if dye_name == '6FAM':
+                    dye_name = '6-FAM'
+                elif dye_name == 'PAT':
+                    dye_name = 'PET'
+                elif dye_name == 'Bn Joda':
+                    dye_name = 'LIZ'
                 try:
                     dye_wavelength = self.get_data(b('DyeW%d' % idx))
                 except KeyError:
                     dye_wavelength = WAVELENGTH[dye_name]
-                raw_channel = np.array( self.get_data(b('DATA%d' % data_idx)) )
+                raw_channel = np.array(self.get_data(b('DATA%d' % data_idx)))
 
-                results[dye_name] = ABIF_Channel( dye_name, dye_wavelength, raw_channel )
+                results[dye_name] = ABIF_Channel(dye_name, dye_wavelength, raw_channel)
 
             except KeyError:
                 pass
@@ -160,12 +164,12 @@ class ABIF(object):
 
     def get_run_start_time(self):
 
-        rdate = self.get_data( b'RUND1' )
-        rtime = self.get_data( b'RUNT1' )
+        rdate = self.get_data(b'RUND1')
+        rtime = self.get_data(b'RUNT1')
         return datetime.datetime(rdate[0], rdate[1], rdate[2], rtime[0], rtime[1], rtime[2])
 
-def read_abif_stream(istream):
 
+def read_abif_stream(istream):
     bdata = istream.read()
 
     if not bdata.startswith(b'ABIF'):
@@ -174,7 +178,7 @@ def read_abif_stream(istream):
     t = ABIF()
     t.version = struct.unpack('>h', bdata[4:6])[0]
 
-    dir_entry_size = struct.calcsize( abif_direntry )
+    dir_entry_size = struct.calcsize(abif_direntry)
     header = struct.unpack(abif_direntry, bdata[6: 6 + dir_entry_size])
     dir_entry_num = header[4]
     dir_entry_off = struct.unpack('>l', header[6])[0]
@@ -183,35 +187,35 @@ def read_abif_stream(istream):
 
     for i in range(0, dir_entry_num):
         offset = dir_entry_off + 28 * i
-        elems = struct.unpack( abif_direntry, bdata[ offset : offset + 28 ] )
-        de = ABIF_DirEntry( *elems )
+        elems = struct.unpack(abif_direntry, bdata[offset: offset + 28])
+        de = ABIF_DirEntry(*elems)
         if de.tag in t.dir_entries:
             t.dir_entries[de.tag][de.no] = de
         else:
-            t.dir_entries[de.tag] = { de.no : de }
+            t.dir_entries[de.tag] = {de.no: de}
 
-        #alt_type = abitags.get("%s%d" % (de.tag, de.no), de.etype)
+        # alt_type = abitags.get("%s%d" % (de.tag, de.no), de.etype)
         alt_type = abitags.get(de.tag + str(de.no).encode('ASCII'), de.etype)
         if alt_type != de.etype:
-            D( "Warning: inconsistent element type for %s" % de.tag )
+            D("Warning: inconsistent element type for %s" % de.tag)
         if alt_type == 18: de.num -= 1
-        etype_fmt = abitypes.get( alt_type )
+        etype_fmt = abitypes.get(alt_type)
         if not etype_fmt:
             raise RuntimeError('unknown alt_type: %d with de.num: %d' % (alt_type, de.num))
         if alt_type not in (10, 11, 1024):
             etype_fmt = etype_fmt % de.num
         elif alt_type == 1024:
             etype_fmt = etype_fmt % (de.esize * de.num)
-        #D( etype_fmt, alt_type )
+        # D( etype_fmt, alt_type )
         if de.dsize <= 4:
-            de.data = struct.unpack( etype_fmt, de.drec[:de.dsize] )
+            de.data = struct.unpack(etype_fmt, de.drec[:de.dsize])
             if alt_type in [10, 11]:
                 continue
         else:
             offset = struct.unpack('>l', de.drec)[0]
-            buf = bdata[offset : offset + de.dsize]
-            #print(de.tag, de.no, de.etype, de.esize, etype_fmt, de.dsize)
-            de.data = struct.unpack( etype_fmt, buf )
+            buf = bdata[offset: offset + de.dsize]
+            # print(de.tag, de.no, de.etype, de.esize, etype_fmt, de.dsize)
+            de.data = struct.unpack(etype_fmt, buf)
         if de.num == 1 or alt_type in (18, 19, 2):
             de.data = de.data[0]
 
@@ -220,11 +224,11 @@ def read_abif_stream(istream):
 
 FILTER_SETS = {
     'G5': {
-        '6-FAM':    { 'filter': 'B', 'rgb': (0,0,1) },
-        'VIC':      { 'filter': 'G', 'rgb': (0,1,0) },
-        'NED':      { 'filter': 'Y', 'rgb': (0.95,0.95,0) },
-        'PET':      { 'filter': 'R', 'rgb': (1,0.5,0) },
-        'LIZ':      { 'filter': 'O', 'rgb': (1,0,0) }
+        '6-FAM': {'filter': 'B', 'rgb': (0, 0, 1)},
+        'VIC': {'filter': 'G', 'rgb': (0, 1, 0)},
+        'NED': {'filter': 'Y', 'rgb': (0.95, 0.95, 0)},
+        'PET': {'filter': 'R', 'rgb': (1, 0.5, 0)},
+        'LIZ': {'filter': 'O', 'rgb': (1, 0, 0)}
     }
 }
 
@@ -240,13 +244,13 @@ WAVELENGTH = {
 if __name__ == '__main__':
     """ write spectra in abif file to tab-separated text file """
     for infile in sys.argv[1:]:
-        with open( infile, 'rb' ) as instream:
-            t = read_abif_stream( instream )
+        with open(infile, 'rb') as instream:
+            t = read_abif_stream(instream)
         channels = t.get_channels()
-        names = [ '"' + c[0] + '"' for c in channels ]
-        with open( infile + '.txt', 'wt') as out:
-            out.write( '\t'.join( names ) )
-            out.write( '\n' )
-            for p in zip( * [ c[2] for c in channels ] ):
-                out.write( '\t'.join( str(x) for x in p ) )
-                out.write( '\n' )
+        names = ['"' + c[0] + '"' for c in channels]
+        with open(infile + '.txt', 'wt') as out:
+            out.write('\t'.join(names))
+            out.write('\n')
+            for p in zip(*[c[2] for c in channels]):
+                out.write('\t'.join(str(x) for x in p))
+                out.write('\n')

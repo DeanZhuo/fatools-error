@@ -1,9 +1,9 @@
 # basic classes that mimic msdb classes
 # this is filesystem-based database
-
+import os
 
 from fatools.lib.fautil.mixin import (AssayMixIn, ChannelMixIn,
-            MarkerMixIn, PanelMixIn, AlleleSetMixIn)
+                                      MarkerMixIn, PanelMixIn, AlleleSetMixIn)
 
 
 class sessionmgr(object):
@@ -31,7 +31,7 @@ class base(object):
         pass
 
     def query(self):
-        pass        
+        pass
 
 
 class Sample(base):
@@ -52,38 +52,33 @@ class Assay(base, AssayMixIn):
         self.sample = None
         self.panel = None
 
-
     def set_directory(self, dirname):
         self._dirname = dirname
         self._assayname = None
-
 
     def load(self, with_trace=True):
         """ load assay from files into memory """
 
         # try to load channels from yaml if exists
         channel_yaml = "%s/channels.yaml" % self._dirname
-        if os.path.exists( channel_yaml ):
+        if os.path.exists(channel_yaml):
             # load yaml
             pass
-
 
         # load smooth data, if not exists
         trace_file = "%s/traces.tab" % self._dirname
         if with_trace:
-            if os.path.exists( trace_file ):
+            if os.path.exists(trace_file):
                 pass
             else:
                 pass
-
 
     def save(self):
 
         pass
 
-
     def new_channel(self, raw_data, data, dye, wavelen, status,
-            median, mean, max_height, min_height, std_dev):
+                    median, mean, max_height, min_height, std_dev):
         channel = Channel()
         channel.raw_data = raw_data
         channel.data = data
@@ -100,21 +95,19 @@ class Assay(base, AssayMixIn):
         # need to assign initial marker
         channel.marker = undefined_marker
 
-        self.channels.append( channel )
+        self.channels.append(channel)
         return channel
-
 
 
 class Channel(base, ChannelMixIn, AlleleSetMixIn):
 
     def __init__(self):
-        self.raw_data = None    # raw data from ABI
-        self.data = None        # smoothed data using savitzky-golay and baseline correction
+        self.raw_data = None  # raw data from ABI
+        self.data = None  # smoothed data using savitzky-golay and baseline correction
         self.marker = None
         self.dye = None
 
         self._assay = None
-
 
     def get_allele_class(self):
         return Allele
@@ -128,7 +121,6 @@ class Channel(base, ChannelMixIn, AlleleSetMixIn):
 
         return self.raw_data
 
-
     def new_alleleset(self):
         # note: we don't really have AlleleSet, just return ourselves
         return self
@@ -136,41 +128,38 @@ class Channel(base, ChannelMixIn, AlleleSetMixIn):
     def get_latest_alleleset(self):
         return self
 
-
     def new_allele(self, rtime, height, area, brtime, ertime, wrtime, srtime, beta, theta,
-                    type, method):
-        allele = Allele( rtime = rtime, height = height, area = area,
-                    brtime = brtime, ertime = ertime, wrtime = wrtime, srtime = srtime,
-                    beta = beta, theta = theta, type = type, method = method )
+                   type, method):
+        allele = Allele(rtime=rtime, height=height, area=area,
+                        brtime=brtime, ertime=ertime, wrtime=wrtime, srtime=srtime,
+                        beta=beta, theta=theta, type=type, method=method)
         allele.alleleset = self
 
         return allele
 
 
-
 class Allele(base):
-
     """ follow the structure of msaf Allele database schema
     """
 
     def __init__(self, bin=-1, asize=-1, aheight=-1, size=-1,
-                rtime=-1, brtime=-1, ertime=-1, wrtime=-1, srtime=-1,
-                height=-1, area=-1, beta=-1, delta=0,
-                    type=None, method=None, marker=None):
+                 rtime=-1, brtime=-1, ertime=-1, wrtime=-1, srtime=-1,
+                 height=-1, area=-1, beta=-1, delta=0,
+                 type=None, method=None, marker=None):
         self.bin = bin
-        self.asize = asize          # adjusted size from reference
-        self.aheight = aheight      # adjusted height
-        self.size = size            # real size
-        self.rtime = rtime          # retention time
-        self.brtime = brtime        # begin retention time
-        self.ertime = ertime        # end retention time
-        self.wrtime = wrtime        # width of peak by retention time
-        self.srtime = srtime        # symmetrical of peak by retention time
-        self.height = height        # real height
-        self.area = area            # area
-        self.beta = beta            # beta of peak, area / height
-        self.delta = delta          # deviation from bin point size
-        self.type = type            # type of peak
+        self.asize = asize  # adjusted size from reference
+        self.aheight = aheight  # adjusted height
+        self.size = size  # real size
+        self.rtime = rtime  # retention time
+        self.brtime = brtime  # begin retention time
+        self.ertime = ertime  # end retention time
+        self.wrtime = wrtime  # width of peak by retention time
+        self.srtime = srtime  # symmetrical of peak by retention time
+        self.height = height  # real height
+        self.area = area  # area
+        self.beta = beta  # beta of peak, area / height
+        self.delta = delta  # deviation from bin point size
+        self.type = type  # type of peak
         self.method = method
         self.marker = marker
 
@@ -179,7 +168,6 @@ class Allele(base):
 
 
 class Marker(base, MarkerMixIn):
-
     """ Marker information
     """
 
@@ -195,12 +183,12 @@ class Marker(base, MarkerMixIn):
 
 undefined_marker = Marker('undefined', 10, 600, 0, [])
 
-class Panel(base, PanelMixIn):
 
+class Panel(base, PanelMixIn):
     """ Panel information
     """
 
-    def __init__(self, code, data ):
+    def __init__(self, code, data):
         self.code = code
         self.data = data
         self._dyes = {}
@@ -209,6 +197,7 @@ class Panel(base, PanelMixIn):
         print('creating marker: %s' % code)
         m = Marker(code, 10, 600, 0, None)
         return m
+
 
 # the filesystem-based database for sample and allele
 #
@@ -233,7 +222,7 @@ class Panel(base, PanelMixIn):
 #           assay_2/
 #                   channels.yaml
 
-def load_sample_manifest( filename ):
+def load_sample_manifest(filename):
     """
     loading sample manifest
     """
@@ -241,7 +230,7 @@ def load_sample_manifest( filename ):
     pass
 
 
-def load_assay_manifest( filename ):
+def load_assay_manifest(filename):
     """
     loading assay manifest
     """
@@ -249,7 +238,7 @@ def load_assay_manifest( filename ):
     pass
 
 
-def load_channel_manifest( filename ):
+def load_channel_manifest(filename):
     """
     loading channel manifest
     """
@@ -257,7 +246,7 @@ def load_channel_manifest( filename ):
     pass
 
 
-def load_assay( dirname ):
+def load_assay(dirname):
     """ return Assay instance """
 
     # get the last name
@@ -265,12 +254,11 @@ def load_assay( dirname ):
     assay_name = None
     assay_file = assay_name + '.fsa'
     assay_path = "%s/%s" % (assay_name, assay_file)
-    
 
     # 
 
 
-def load_channels( yaml_file ):
+def load_channels(yaml_file):
     """
     load yaml containing channels and alleles
     """
@@ -278,7 +266,6 @@ def load_channels( yaml_file ):
 
 
 class fsdb(object):
-    
+
     def __init__(self, rootdir):
         self.rootdir = rootdir
-
