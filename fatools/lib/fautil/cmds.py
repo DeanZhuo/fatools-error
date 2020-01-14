@@ -1,106 +1,108 @@
 # provide commands for Fragment Analysis (FA)
+import sys
+
+import transaction
 
 from fatools.lib import params
-from fatools.lib.utils import cerr, cout, cverr, cexit, tokenize, detect_buffer, set_verbosity
+from fatools.lib.utils import cerr, cout, cverr, cexit, tokenize, detect_buffer, set_verbosity, get_dbhandler
 
 import argparse, yaml, csv, os
 from io import StringIO
 
+from fatools.scripts.facmd import do_facmd
+
 
 def init_argparser(parser=None):
-
     p = parser if parser else argparse.ArgumentParser('facmd')
 
     p.add_argument('--sqldb', default=False,
-            help = 'SQLite3 database filename')
+                   help='SQLite3 database filename')
 
     p.add_argument('--file', default=None,
-            help = "Comma-separated FSA filenames (optional)")
+                   help="Comma-separated FSA filenames (optional)")
 
     p.add_argument('--fsdb', default=None,
-            help = 'Filesystem-based database')
+                   help='Filesystem-based database')
 
     p.add_argument('--infile', default=None,
-            help = 'Tab-delimited or CSV manifest file')
-
+                   help='Tab-delimited or CSV manifest file')
 
     # command in ascending order
 
     p.add_argument('--clear', default=False, action='store_true',
-            help = 'clear (or remove) all peaks from FSA file')
+                   help='clear (or remove) all peaks from FSA file')
 
     p.add_argument('--align', default=False, action='store_true',
-            help = 'scan ladder channel, preannotate and align with size standards')
+                   help='scan ladder channel, preannotate and align with size standards')
 
     p.add_argument('--call', default=False, action='store_true',
-            help = 'scan non-ladder channels, preannotate peaks and determine their sizes')
+                   help='scan non-ladder channels, preannotate peaks and determine their sizes')
 
     p.add_argument('--bin', default=False, action='store_true',
-            help = 'bin non-ladder peaks')
+                   help='bin non-ladder peaks')
 
     p.add_argument('--annotate', default=False, action='store_true',
-            help = 'annotate non-ladder peaks')
+                   help='annotate non-ladder peaks')
 
     p.add_argument('--plot', default=False, action='store_true',
-            help = 'plot normalized trace')
+                   help='plot normalized trace')
 
     p.add_argument('--split-plot', action='store_true',
-            help='plot dye separately')
+                   help='plot dye separately')
 
     p.add_argument('--dendogram', default=False, action='store_true',
-            help = 'plot dendograms of ladders and alleles')
+                   help='plot dendograms of ladders and alleles')
 
     p.add_argument('--ladder-plot', action='store_true',
-            help='report and plot ladder alignment for assessment purposes')
+                   help='report and plot ladder alignment for assessment purposes')
 
     # semi-mandatory
 
     p.add_argument('--panel', default="",
-            help = 'comma-separated panel code(s) (prebuilt options: GS600LIZ, GS500LIZ')
+                   help='comma-separated panel code(s) (prebuilt options: GS600LIZ, GS500LIZ')
 
     p.add_argument('--marker', default="",
-            help = 'comma-separated marker code(s)')
+                   help='comma-separated marker code(s)')
 
     p.add_argument('--panelfile', default="",
-            help = 'YAML panel file')
+                   help='YAML panel file')
 
     p.add_argument('--markerfile', default="",
-            help = "YAML marker file")
+                   help="YAML marker file")
 
     # options
 
     p.add_argument('--score', default=1.0, type=float,
-            help = 'minimum alignment score threshold to be plotted')
+                   help='minimum alignment score threshold to be plotted')
 
     p.add_argument('--rss', default=-1, type=float,
-            help = 'maximum rss threshold to be plotted')
+                   help='maximum rss threshold to be plotted')
 
     p.add_argument('--cluster', default=0, type=int,
-            help = 'number of cluster for hierarchical clustering alignment')
+                   help='number of cluster for hierarchical clustering alignment')
 
     p.add_argument('--verbose', default=0, type=int,
-            help = 'show verbosity')
+                   help='show verbosity')
 
     p.add_argument('--cache-path',
-            help='store cache in other location (defaults to home)')
+                   help='store cache in other location (defaults to home)')
 
     p.add_argument('--no-cache', default=False, action='store_true',
-            help = 'do not use caches')
+                   help='do not use caches')
 
     p.add_argument('--plot-file',
-            help='save --plot or --split-plot result into a file')
+                   help='save --plot or --split-plot result into a file')
 
     p.add_argument('--outfile',
-            help = 'output filename')
+                   help='output filename')
 
     p.add_argument('--commit', default=False, action='store_true',
-            help = 'commit to database')
+                   help='commit to database')
 
     return p
 
 
 def main(args):
-
     if args.verbose != 0:
         set_verbosity(args.verbose)
 
@@ -122,7 +124,7 @@ def main(args):
             cerr('** COMMIT to database **')
     elif dbh:
         cerr('WARNING ** running without database COMMIT! All changes will be discarded!')
-        if not ( args.test or args.y ):
+        if not (args.test or args.y):
             keys = input('Do you want to continue [y/n]? ')
             if not keys.lower().strip().startswith('y'):
                 sys.exit(1)
@@ -132,23 +134,22 @@ def main(args):
 
 
 def do_facmds(args, fsa_list, dbh=None):
-
     executed = 0
 
     if args.clear:
-        do_clear( args, fsa_list, dbh )
+        do_clear(args, fsa_list, dbh)
         executed += 1
     if args.align:
-        do_align( args, fsa_list, dbh )
+        do_align(args, fsa_list, dbh)
         executed += 1
     if args.call:
-        do_call( args, fsa_list, dbh )
+        do_call(args, fsa_list, dbh)
         executed += 1
     if args.plot or args.split_plot or args.ladder_plot:
         do_plot(args, fsa_list, dbh)
         executed += 1
     if args.dendogram:
-        do_dendogram( args, fsa_list, dbh)
+        do_dendogram(args, fsa_list, dbh)
         executed += 1
 
     if executed == 0:
@@ -157,12 +158,11 @@ def do_facmds(args, fsa_list, dbh=None):
         cerr('I: executed %d command(s)' % executed)
 
 
-def do_clear( args, fsa_list, dbh ):
+def do_clear(args, fsa_list, dbh):
     pass
 
 
-def do_align( args, fsa_list, dbh ):
-
+def do_align(args, fsa_list, dbh):
     cerr('I: Aligning size standards...')
 
     for (fsa, sample_code) in fsa_list:
@@ -170,8 +170,7 @@ def do_align( args, fsa_list, dbh ):
         fsa.align(params.Params())
 
 
-def do_call( args, fsa_list, dbh ):
-
+def do_call(args, fsa_list, dbh):
     cerr('I: Calling non-ladder peaks...')
 
     for (fsa, sample_code) in fsa_list:
@@ -180,7 +179,6 @@ def do_call( args, fsa_list, dbh ):
 
 
 def do_plot(args, fsa_list, dbh):
-
     cerr('I: Creating plot...')
 
     from fatools.lib.fautil import plot
@@ -188,22 +186,20 @@ def do_plot(args, fsa_list, dbh):
     plot.plot(args, fsa_list, dbh)
 
 
-def do_dendogram( args, fsa_list, dbh ):
-
+def do_dendogram(args, fsa_list, dbh):
     from fatools.lib.fautil import hclustalign
     from matplotlib import pyplot as plt
 
     for (fsa, sample_code) in fsa_list:
-
         c = fsa.get_ladder_channel()
-        c.scan(params.Params()) # scan first if necessary
+        c.scan(params.Params())  # scan first if necessary
 
         ladder = fsa.panel.get_ladder()
         peaks = c.get_alleles()
 
-        #initial_pair, P, L = hclustalign.hclust_align(peaks, ladder)
-        P = hclustalign.generate_tree( [ (n.rtime, 0) for n in peaks ] )
-        L = hclustalign.generate_tree( [ (e, 0) for e in ladder['sizes'] ] )
+        # initial_pair, P, L = hclustalign.hclust_align(peaks, ladder)
+        P = hclustalign.generate_tree([(n.rtime, 0) for n in peaks])
+        L = hclustalign.generate_tree([(e, 0) for e in ladder['sizes']])
 
         clusters = hclustalign.fcluster(L.z, args.cluster or ladder['k'], criterion="maxclust")
         print(clusters)
@@ -214,14 +210,14 @@ def do_dendogram( args, fsa_list, dbh ):
         plt.figure()
         plt.subplot(121)
         hclustalign.dendrogram(L.z, leaf_rotation=90, leaf_font_size=8,
-                labels = [ x[0] for x in L.p ])
+                               labels=[x[0] for x in L.p])
         plt.subplot(122)
         hclustalign.dendrogram(P.z, leaf_rotation=90, leaf_font_size=8,
-                labels = [ x[0] for x in P.p ])
+                               labels=[x[0] for x in P.p])
         plt.show()
 
 
-def open_fsa( args ):
+def open_fsa(args):
     """ open FSA file(s) and prepare fsa instances
         requires: args.file, args.panel, args.panelfile
     """
@@ -263,14 +259,14 @@ def open_fsa( args ):
             fsa = FSA.from_file(fsa_filename, panel, cache=not args.no_cache,
                                 cache_path=cache_path)
             # yield (fsa, str(i))
-            fsa_list.append( (fsa, str(index)) )
+            fsa_list.append((fsa, str(index)))
             index += 1
 
     elif args.infile:
 
         with open(args.infile) as f:
-            buf, delim = detect_buffer( f.read() )
-        inrows = csv.DictReader( StringIO(buf), delimiter=delim )
+            buf, delim = detect_buffer(f.read())
+        inrows = csv.DictReader(StringIO(buf), delimiter=delim)
         line = 1
         index = 1
 
@@ -283,7 +279,7 @@ def open_fsa( args ):
                 continue
 
             if r.get('OPTIONS', None):
-                options = tokenize( r['OPTIONS'] )
+                options = tokenize(r['OPTIONS'])
             else:
                 options = None
 
@@ -295,17 +291,17 @@ def open_fsa( args ):
             if 'SAMPLE' in inrows.fieldnames:
 
                 # yield (fsa, r['SAMPLE'])
-                fsa_list.append( (fsa, r['SAMPLE']) )
+                fsa_list.append((fsa, r['SAMPLE']))
             else:
 
                 # yield (fsa, str(index))
-                fsa_list.append( (fsa, str(index)) )
+                fsa_list.append((fsa, str(index)))
                 index += 1
 
     return fsa_list
 
 
-def get_fsa_list( args, dbh ):
+def get_fsa_list(args, dbh):
     """
     get fsa instance from database based on parameters in args
     """
@@ -313,7 +309,7 @@ def get_fsa_list( args, dbh ):
     if not args.batch:
         cexit('ERR: using database requires --batch argument!', 1)
 
-    batch = dbh.get_batch( args.batch )
+    batch = dbh.get_batch(args.batch)
     if not batch:
         cexit('ERR: batch %s not found!' % args.batch, 1)
 
@@ -339,8 +335,7 @@ def get_fsa_list( args, dbh ):
         for assay in sample.assays:
             if assays and assay.filename not in assays: continue
             if panels and assay.panel.code not in panels: continue
-            fsa_list.append( (assay, sample.code) )
+            fsa_list.append((assay, sample.code))
 
     cerr('I: number of assays to be processed: %d' % len(assay_list))
     return fsa_list
-

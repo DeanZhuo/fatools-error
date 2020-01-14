@@ -1,4 +1,3 @@
-
 import sys, os
 from fatools.lib.utils import cout, cerr
 from fatools.lib.sqlmodels.handler_interface import base_sqlhandler
@@ -6,7 +5,6 @@ from fatools.lib.sqlmodels2 import schema
 
 
 class SQLHandler(base_sqlhandler):
-
     Panel = schema.Panel
     Marker = schema.Marker
     Batch = schema.Batch
@@ -15,7 +13,6 @@ class SQLHandler(base_sqlhandler):
     Channel = schema.Channel
     AlleleSet = schema.AlleleSet
     Allele = schema.Allele
-
 
     def __init__(self, dbfile, initial=False):
         cerr("Opening db: %s" % dbfile)
@@ -28,11 +25,9 @@ class SQLHandler(base_sqlhandler):
         self.dbfile = dbfile
         self.engine, self.session = schema.engine_from_file(dbfile)
 
-
-    def initdb(self, create_table = True):
+    def initdb(self, create_table=True):
         if create_table:
             schema.Base.metadata.create_all(self.engine)
         from fatools.lib.sqlmodels2.setup import setup
-        setup( self )
+        setup(self)
         cerr('Database at %s has been initialized.' % self.dbfile)
-

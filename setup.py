@@ -19,7 +19,13 @@ requires = [
     'transaction',
     'sortedcontainers',
     'peakutils',
-    ]
+    'mdp',
+    'rpy2',
+    'mlpy',
+    'IPython',
+    'mlpy',
+    'dtw', 'sqlalchemy'
+]
 
 setup(name='fatools',
       version='0.7',

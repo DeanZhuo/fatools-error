@@ -1,6 +1,6 @@
-
 from pandas import DataFrame
 from sqlalchemy.orm.exc import NoResultFound
+
 
 class base_sqlhandler(object):
     """ base class for SQLAlchemy-friendly handler """
@@ -15,7 +15,6 @@ class base_sqlhandler(object):
     def __init__(self):
         self.engine = None
         self.session = None
-
 
     ## constructor for root classes
 
@@ -34,15 +33,14 @@ class base_sqlhandler(object):
         i._dbh_session_ = self.session()
         return i
 
-
     ## getter for single root classes
 
     def get_panel(self, panel_code):
         try:
-            if panel_code == None:
+            if panel_code is None:
                 return self.get_panels()
             elif type(panel_code) == list:
-                return [ self.Panel.search(p, self.session()) for p in panel_code ]
+                return [self.Panel.search(p, self.session()) for p in panel_code]
             else:
                 return self.Panel.search(panel_code, self.session())
         except NoResultFound:
@@ -50,10 +48,10 @@ class base_sqlhandler(object):
 
     def get_batch(self, batch_code):
         try:
-            if batch_code == None:
+            if batch_code is None:
                 return self.get_batches()
             elif type(batch_code) == list:
-                return [ self.Batch.search(b, self.session()) for b in batch_code ]
+                return [self.Batch.search(b, self.session()) for b in batch_code]
             else:
                 return self.Batch.search(batch_code, self.session())
         except NoResultFound:
@@ -82,7 +80,6 @@ class base_sqlhandler(object):
         assert class_ and id
         return class_.get(id, self.session())
 
-
     ## getter for multi root classes
     ## this will return a query object that can be further filtered by the caller
 
@@ -97,7 +94,6 @@ class base_sqlhandler(object):
 
     def get_by_ids(self):
         pass
-
 
     ## getter for data
 
@@ -116,32 +112,32 @@ class base_sqlhandler(object):
         assert marker_ids
         assert params
 
-        q = self.session().query( self.AlleleSet.sample_id, self.Channel.assay_id,
-                self.Allele.marker_id, self.Allele.id, self.Allele.bin,
-                self.Allele.size, self.Allele.height
-            ).join(self.Allele).join(self.Channel)
+        q = self.session().query(self.AlleleSet.sample_id, self.Channel.assay_id,
+                                 self.Allele.marker_id, self.Allele.id, self.Allele.bin,
+                                 self.Allele.size, self.Allele.height
+                                 ).join(self.Allele).join(self.Channel)
 
-        q = q.filter( self.AlleleSet.sample_id.in_( sample_ids ) )
+        q = q.filter(self.AlleleSet.sample_id.in_(sample_ids))
 
         q = self.customize_filter(q, params)
 
         # we order based on marker_id, sample_id and then descending height
-        q = q.order_by( self.Allele.marker_id, self.AlleleSet.sample_id,
-                        self.Allele.height.desc() )
+        q = q.order_by(self.Allele.marker_id, self.AlleleSet.sample_id,
+                       self.Allele.height.desc())
 
         print('MARKER IDS:', marker_ids)
 
         if marker_ids:
-            q = q.filter( self.AlleleSet.marker_id.in_( marker_ids ) )
-            #q = q.outerjoin( Marker, Allele.marker_id == Marker.id )
-            #q = q.filter( Marker.id.in_( marker_ids ) )
+            q = q.filter(self.AlleleSet.marker_id.in_(marker_ids))
+            # q = q.outerjoin( Marker, Allele.marker_id == Marker.id )
+            # q = q.filter( Marker.id.in_( marker_ids ) )
 
         if params.abs_threshold > 0:
-            q = q.filter( self.Allele.height > params.abs_threshold )
+            q = q.filter(self.Allele.height > params.abs_threshold)
 
         if params.rel_threshold == 0 and params.rel_cutoff == 0 and params.stutter_ratio == 0:
-            df = DataFrame( [ (marker_id, sample_id, value, size, height, assay_id, allele_id, 1, -1 )
-                    for ( sample_id, assay_id, marker_id, allele_id, value, size, height ) in q ] )
+            df = DataFrame([(marker_id, sample_id, value, size, height, assay_id, allele_id, 1, -1)
+                            for (sample_id, assay_id, marker_id, allele_id, value, size, height) in q])
 
         else:
 
@@ -151,12 +147,12 @@ class base_sqlhandler(object):
             max_height = 0
             last_marker_id = 0
             last_sample_id = 0
-            skip_flag = False       # whether to skip the current sample & marker
-            stutter_flag = False    # whether current allele is considered stutter
+            skip_flag = False  # whether to skip the current sample & marker
+            stutter_flag = False  # whether current allele is considered stutter
             current_alleles = None  # contains the alleles of current sample & marker
 
             # the loop
-            for ( sample_id, assay_id, marker_id, allele_id, value, size, height ) in q:
+            for (sample_id, assay_id, marker_id, allele_id, value, size, height) in q:
                 if sample_id == last_sample_id:
                     if last_marker_id == marker_id:
                         if skip_flag:
@@ -166,8 +162,7 @@ class base_sqlhandler(object):
                         if ratio < params.rel_threshold:
                             skip_flag = True
                             continue
-                        if (    params.rel_cutoff > 0 and
-                                ratio > params.rel_cutoff ):
+                        if 0 < params.rel_cutoff < ratio:
                             # turn off this marker by skipping this sample_id & marker_id
                             skip_flag = True
                             # don't forget to remove the latest allele
@@ -178,18 +173,18 @@ class base_sqlhandler(object):
                         if params.stutter_ratio > 0:
                             for dval, dsize, dheight in current_alleles:
                                 allele_range = abs(dsize - size)
-                                allele_ratio = height/dheight
-                                if ( (  allele_range < params.stutter_range and
-                                        allele_ratio < params.stutter_ratio ) or
-                                      ( allele_range < params.stutter_baserange and
-                                        allele_ratio < params.stutter_baseratio )):
+                                allele_ratio = height / dheight
+                                if ((allele_range < params.stutter_range and
+                                     allele_ratio < params.stutter_ratio) or
+                                        (allele_range < params.stutter_baserange and
+                                         allele_ratio < params.stutter_baseratio)):
                                     stutter_flag = True
                                     break
-                                    current_alleles.append( (value, size, height) )
+                                    current_alleles.append((value, size, height))
                                     print(sample_id, marker_id, value, size, height, allele_ratio)
                                     continue
 
-                        current_alleles.append( (value, size, height) )
+                        current_alleles.append((value, size, height))
                         if stutter_flag:
                             continue
 
@@ -200,26 +195,24 @@ class base_sqlhandler(object):
                     skip_flag = False
                     ratio = 1
                     rank = 1
-                    current_alleles = [ (value, size, height) ]
+                    current_alleles = [(value, size, height)]
 
-                alleles.append( (marker_id, sample_id, value, size, height, assay_id, allele_id, ratio, rank) )
+                alleles.append((marker_id, sample_id, value, size, height, assay_id, allele_id, ratio, rank))
 
-            df = DataFrame( alleles )
+            df = DataFrame(alleles)
 
         if len(df) == 0:
             return df
 
-        df.columns = ( 'marker_id', 'sample_id', 'value', 'size', 'height', 'assay_id', 'allele_id', 'ratio', 'rank' )
+        df.columns = ('marker_id', 'sample_id', 'value', 'size', 'height', 'assay_id', 'allele_id', 'ratio', 'rank')
         return df
-
 
     def customize_filter(self, q, params):
         """ return SQLAlchemy query with peak type filtering """
 
-        if type(params.peaktype) in [ list, tuple ]:
-            q = q.filter( self.Allele.type.in_( params.peaktype  ) )
+        if type(params.peaktype) in [list, tuple]:
+            q = q.filter(self.Allele.type.in_(params.peaktype))
         else:
-            q = q.filter( self.Allele.type == params.peaktype )
+            q = q.filter(self.Allele.type == params.peaktype)
 
         return q
-
