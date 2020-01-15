@@ -38,7 +38,7 @@ def calculate_he(allele_df, adjust=True):
     dist = allele_df.dominant_df_distribution
     for marker_id in dist.index.levels[0]:
         total = dist[marker_id].sum()
-        he = 1.0 - sum((x / total) * * 2 for x in dist[marker_id])
+        he = 1.0 - sum((x / total) ** 2 for x in dist[marker_id])
         if adjust and total > 1:
             he = he * total / (total - 1)
         marker_he[marker_id] = he

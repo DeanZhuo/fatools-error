@@ -321,7 +321,6 @@ class ChannelMixIn(object):
             cerr('ladder: %d; ' % len(alleles), nl=False)
             alleleset.scanning_method = params.ladder.method
 
-
         else:
 
             alleles = algo.scan_peaks(self, params.nonladder, peakdb)

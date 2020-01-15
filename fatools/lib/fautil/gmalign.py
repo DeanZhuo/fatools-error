@@ -9,13 +9,6 @@ from fatools.lib.fautil.alignutils import (estimate_z, pair_f, align_dp,
 
 class ZFunc(object):
 
-    def __init__(self, peaks, sizes, anchor_pairs):
-        """
-        """
-
-
-class ZFunc(object):
-
     def __init__(self, peaks, sizes, anchor_pairs, estimate=False):
         """
         peaks, sizes and anchor_pairs must be in ascending order

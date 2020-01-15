@@ -1,4 +1,4 @@
-from fatools.lib import dpalign as dp
+from fatools.lib.fautil import dpalign as dp
 from fatools.lib.const import *
 from fatools.lib.utils import cout, cerr
 import numpy as np

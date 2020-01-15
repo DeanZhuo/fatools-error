@@ -172,7 +172,7 @@ def do_export(args, dbh):
 
 
 def do_corralleles(args, dbh):
-    from fatools.lib.analysis.correlation import correlate_alleles
+    from fatools.lib.analytics.correlation import correlate_alleles
 
     query = get_query(args, dbh)
     analytical_sets = query.get_filtered_analytical_sets()

@@ -12,7 +12,7 @@ from bisect import bisect_left
 from operator import itemgetter
 from pprint import pprint
 
-from .dpalign import align_peaks, estimate_z
+from ..dpalign import align_peaks, estimate_z
 from .models import *
 from ..traceutils import smooth_signal
 from ...params import LadderScanningParameter, ScanningParameter
@@ -1384,7 +1384,3 @@ def scan_ladder_peak_2(channel, ladder, parameter=None, find_peaks=True):
     # for each results, find the least RSS and the highest DP score and quality score
 
     # set the peaks for peak-ladders
-
-
-def align_ladder_peaks(peak_set, ladder, parameter):
-    pass

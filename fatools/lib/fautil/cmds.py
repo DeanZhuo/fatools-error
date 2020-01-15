@@ -187,7 +187,7 @@ def do_plot(args, fsa_list, dbh):
 
 
 def do_dendogram(args, fsa_list, dbh):
-    from fatools.lib.fautil import hclustalign
+    from fatools.lib.fautil import hcalign as hclustalign
     from matplotlib import pyplot as plt
 
     for (fsa, sample_code) in fsa_list:
@@ -337,5 +337,5 @@ def get_fsa_list(args, dbh):
             if panels and assay.panel.code not in panels: continue
             fsa_list.append((assay, sample.code))
 
-    cerr('I: number of assays to be processed: %d' % len(assay_list))
+    cerr('I: number of assays to be processed: %d' % len(fsa_list))
     return fsa_list

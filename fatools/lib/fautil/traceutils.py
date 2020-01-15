@@ -2,6 +2,7 @@ from math import factorial
 import numpy as np
 import attr
 from scipy import ndimage, signal, optimize
+from scipy.signal import find_peaks_cwt
 
 _TOPHAT_FACTOR = 0.01  # 025   #05
 _MEDWINSIZE = 299
