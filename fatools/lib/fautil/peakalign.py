@@ -9,6 +9,7 @@ cdbg = cerr
 
 
 def fast_align(data, ladders, peaks, qcfunc):
+    hq_result = mq_result = hq_relax_msg = mq_relax_msg = None
     peaks = sorted(peaks, key=lambda x: x.rtime)
 
     hq_peaks = [p for p in peaks if p.qscore >= 0.99]

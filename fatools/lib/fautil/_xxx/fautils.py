@@ -17,6 +17,8 @@ from .models import *
 from ..traceutils import smooth_signal
 from ...params import LadderScanningParameter, ScanningParameter
 
+__printdebug__ = None
+
 
 def set_debug(flag):
     global __printdebug__
@@ -301,7 +303,7 @@ def scan_ladder_peaks(channel, ladders, parameter=None):
 
     # use peaks & min_height later on
 
-    rss, z, aligned_peaks = align_peaks(ladders, filtered_peaks)
+    # rss, z, aligned_peaks = align_peaks(ladders, filtered_peaks)
 
     score, reports = score_ladder(rss, len(aligned_peaks), len(ladders))
     reports.append('Height > %d' % used_min_height)
@@ -800,7 +802,7 @@ def bin_peaks(channel, marker):
         #    continue
 
         if not marker.min_size < allele.size < marker.max_size:
-            allele.type == 'peak-unassigned'
+            allele.type = 'peak-unassigned'
             continue
 
         if allele.type not in ['peak-called', 'peak-overlap']:

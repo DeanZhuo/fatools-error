@@ -9,8 +9,6 @@ from fatools.lib.utils import cerr, cout, cverr, cexit, tokenize, detect_buffer,
 import argparse, yaml, csv, os
 from io import StringIO
 
-from fatools.scripts.facmd import do_facmd
-
 
 def init_argparser(parser=None):
     p = parser if parser else argparse.ArgumentParser('facmd')
@@ -107,7 +105,7 @@ def main(args):
         set_verbosity(args.verbose)
 
     dbh = None
-
+    fsa_list = None
     if args.file or args.infile:
         cverr(4, 'D: opening FSA file(s)')
         fsa_list = open_fsa(args)
@@ -120,7 +118,7 @@ def main(args):
 
     if args.commit:
         with transaction.manager:
-            do_facmd(args, fsa_list, dbh)
+            do_facmds(args, fsa_list, dbh)
             cerr('** COMMIT to database **')
     elif dbh:
         cerr('WARNING ** running without database COMMIT! All changes will be discarded!')
@@ -333,7 +331,7 @@ def get_fsa_list(args, dbh):
     for sample in batch.samples:
         if samples and sample.code not in samples: continue
         for assay in sample.assays:
-            if assays and assay.filename not in assays: continue
+            if fsas and assay.filename not in fsas: continue
             if panels and assay.panel.code not in panels: continue
             fsa_list.append((assay, sample.code))
 

@@ -88,7 +88,7 @@ class BinContainer(object):
 
     def repr(self):
         return "<Bin: %d / %5.4f / %5.4f / %5.4f - %5.4f d: %5.4f f: %d>" % (
-            self.size, np.mean(self.values), np.median(self.values), min(self.values), max(self.values),
+            self.size, np.mean(self.values)[0], np.median(self.values)[0], min(self.values), max(self.values),
             max(self.values) - min(self.values), len(self.values)
         )
 
