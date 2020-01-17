@@ -12,7 +12,9 @@ colour_list = ['#1f78b4', '#33a02c', '#e31a1c', '#ff7f00', '#6a3d9a', '#b15928',
 
 class Selector(object):
 
-    def __init__(self, samples=[]):
+    def __init__(self, samples=None):
+        if samples is None:
+            samples = []
         self.samples = samples
         self.global_options = None
         self._sample_sets = None

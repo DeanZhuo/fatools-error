@@ -12,10 +12,12 @@ from bisect import bisect_left
 from operator import itemgetter
 from pprint import pprint
 
-from .dpalign import align_peaks, estimate_z
+from ..dpalign import align_peaks, estimate_z
 from .models import *
 from ..traceutils import smooth_signal
 from ...params import LadderScanningParameter, ScanningParameter
+
+__printdebug__ = None
 
 
 def set_debug(flag):
@@ -301,7 +303,7 @@ def scan_ladder_peaks(channel, ladders, parameter=None):
 
     # use peaks & min_height later on
 
-    rss, z, aligned_peaks = align_peaks(ladders, filtered_peaks)
+    # rss, z, aligned_peaks = align_peaks(ladders, filtered_peaks)
 
     score, reports = score_ladder(rss, len(aligned_peaks), len(ladders))
     reports.append('Height > %d' % used_min_height)
@@ -800,7 +802,7 @@ def bin_peaks(channel, marker):
         #    continue
 
         if not marker.min_size < allele.size < marker.max_size:
-            allele.type == 'peak-unassigned'
+            allele.type = 'peak-unassigned'
             continue
 
         if allele.type not in ['peak-called', 'peak-overlap']:
@@ -1384,7 +1386,3 @@ def scan_ladder_peak_2(channel, ladder, parameter=None, find_peaks=True):
     # for each results, find the least RSS and the highest DP score and quality score
 
     # set the peaks for peak-ladders
-
-
-def align_ladder_peaks(peak_set, ladder, parameter):
-    pass

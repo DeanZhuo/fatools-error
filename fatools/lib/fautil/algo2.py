@@ -65,6 +65,9 @@ class Channel(object):
 
         result = align_peaks(self, params.ladder, ladders, qcfunc)
 
+    def is_ladder(self):
+        return self.marker.code == 'ladder'
+
 
 def scan_peaks(channel, params, offset=0):
     """
@@ -348,6 +351,7 @@ def filter_for_artifact(peaks, params, expected_peak_number=0):
     # to select the most likely peaks that can be considered as true signals,
     # which is especially necessary for ladder - size assignment
 
+    q_omega = None
     if len(peaks) == expected_peak_number:
         return peaks
 
@@ -670,6 +674,7 @@ def local_southern(ladder_alleles):
             deviation is calculated as delta square between curve1 and curve2
         """
 
+        global x
         idx = ladder_allele_sorted.bisect_key_right(rtime)
 
         # left curve

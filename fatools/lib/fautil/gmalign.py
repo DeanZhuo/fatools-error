@@ -9,13 +9,6 @@ from fatools.lib.fautil.alignutils import (estimate_z, pair_f, align_dp,
 
 class ZFunc(object):
 
-    def __init__(self, peaks, sizes, anchor_pairs):
-        """
-        """
-
-
-class ZFunc(object):
-
     def __init__(self, peaks, sizes, anchor_pairs, estimate=False):
         """
         peaks, sizes and anchor_pairs must be in ascending order
@@ -53,8 +46,7 @@ class ZFunc(object):
         for order in orders:
             zresult = estimate_z(self.anchor_rtimes, self.anchor_sizes, order)
 
-            zres = align_dp(
-                self.rtimes, self.sizes, zresult.z, zresult.rss, order)
+            zres = align_dp(self.rtimes, self.sizes, zresult.z, zresult.rss, order)
 
             zresults.append(zres)
 
@@ -162,7 +154,7 @@ def align_gm(peaks, ladder, anchor_pairs, z=None):
     results.sort(key=lambda x: x.rss)
     zresult = results[0]
 
-    # last dp
+    # last dp   zres = align_dp(self.rtimes, self.sizes, zresult.z, zresult.rss, order)
     dp_result = align_dp(f.rtimes, f.sizes, zresult.z, zresult.rss)
     # import pprint; pprint.pprint(dp_result.sized_peaks)
     # plot(f.rtimes, f.sizes, dp_result.z, [(x[1], x[0]) for x in dp_result.sized_peaks])
@@ -196,10 +188,12 @@ def align_sh(peaks, ladder):
     return result
 
 
-def align_de(peaks, ladder, initial_pair=[]):
+def align_de(peaks, ladder, initial_pair=None):
     """ differential evolution method
     """
 
+    if initial_pair is None:
+        initial_pair = []
     cerr('I: differential evolution method is running!')
 
     sizes = ladder['sizes']

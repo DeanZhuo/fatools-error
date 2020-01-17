@@ -106,6 +106,7 @@ class FSA(FSAMixIn):
     @classmethod
     def from_file(cls, fsa_filename, panel, excluded_markers=None,
                   cache=True, cache_path=None):
+        cache_file = None
         fsa = cls()
         fsa.filename = os.path.basename(fsa_filename)
         fsa.set_panel(panel, excluded_markers)

@@ -371,8 +371,6 @@ def do_initsample(args, dbh):
     cout('INFO - inserted new %d sample(s), updated %d sample(s)' %
          (inserted, updated))
 
-    return
-
     inrows = csv.reader(open(args.infile),
                         delimiter=',' if args.infile.endswith('.csv') else '\t')
 

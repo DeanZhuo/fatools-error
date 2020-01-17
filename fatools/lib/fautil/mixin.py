@@ -168,7 +168,7 @@ class BatchMixIn(object):
         """ this has to override by sub-class to provide more efficient implementation
             based on the underlying database architecture
         """
-        return list([x.id for s in self.samples])
+        return list([s.id for s in self.samples])
 
     def update(self, obj):
         raise NotImplementedError('PROG/ERR - child class must provide this method')
@@ -198,6 +198,7 @@ class SampleMixIn(object):
     def add_fsa_assay(self, trace, filename, panel_code, options=None, species=None,
                       dbhandler=None, dry_run=False):
 
+        global assay
         assert dbhandler, 'Please provide dbhandler function'
 
         # check panel
@@ -258,7 +259,7 @@ class SampleMixIn(object):
 
         return assay
 
-    def new_fsa_assay(self, trace, filename, panel):
+    def new_fsa_assay(self, raw_data, filename, status, panel):
 
         raise NotImplementedError('PROG/ERR - child class must override this method!')
 
@@ -320,7 +321,6 @@ class ChannelMixIn(object):
             alleles = algo.scan_peaks(self, params.ladder, peakdb)
             cerr('ladder: %d; ' % len(alleles), nl=False)
             alleleset.scanning_method = params.ladder.method
-
 
         else:
 
@@ -437,7 +437,7 @@ class ChannelMixIn(object):
     def alleles(self):
         return self.get_latest_alleleset().alleles
 
-    def new_allele(self, rtime, height, area, brtime, ertime, wrtime, srtime, beta, theta):
+    def new_allele(self, rtime, height, area, brtime, ertime, wrtime, srtime, beta, theta, type, method):
         alleleset = self.get_latest_alleleset()
         return alleleset.new_allele(rtime=rtime, height=height, area=area,
                                     brtime=brtime, ertime=ertime, wrtime=wrtime, srtime=srtime,

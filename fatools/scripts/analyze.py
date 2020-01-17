@@ -172,12 +172,12 @@ def do_export(args, dbh):
 
 
 def do_corralleles(args, dbh):
-    from fatools.lib.analysis.correlation import correlate_alleles
+    from fatools.lib.analytics.correlation import correlate_alleles
 
     query = get_query(args, dbh)
     analytical_sets = query.get_filtered_analytical_sets()
     for marker_code in analytical_sets.marker_ids:
-        report = correlate_alleles(analytical_sets[0], analytical_sets[1], marker=marker_code)
+        report = correlate_alleles(analytical_sets[0], analytical_sets[1], marker_code)
         cout(make_correlate_report(report))
 
 

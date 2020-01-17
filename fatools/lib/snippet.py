@@ -4,6 +4,7 @@ import numpy as np
 
 from fatools.lib.const import peaktype
 from fatools.lib.fautil.alignutils import estimate_z
+from fatools.lib.fautil.dpalign import align_peaks
 
 
 def adaptive_align_naive(trace, peaks, avg_height, ladders):

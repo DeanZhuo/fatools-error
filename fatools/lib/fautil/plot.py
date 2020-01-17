@@ -82,7 +82,7 @@ def get_size_rtime_rfu(channel):
     alleles = channel.alleles
     size_rtime_rfu = []
 
-    if alleles == []:
+    if not alleles:
         return size_rtime_rfu
 
     for allele in alleles:

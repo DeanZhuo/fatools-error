@@ -1,4 +1,4 @@
-from fatools.lib import dpalign as dp
+from fatools.lib.fautil import dpalign as dp
 from fatools.lib.const import *
 from fatools.lib.utils import cout, cerr
 import numpy as np
@@ -426,44 +426,6 @@ def z_align(peaks, ladders, peak_pairs):
         stage += 1
 
     return peak_pairs
-
-
-def shift_peak_pairs(peak_pairs, z):
-    """ shift a peak pairs based on the biggest deviation, return [ (rtime, size), ... ] """
-
-    f = np.poly1d(z)
-    max_i = 0
-    max_value = 0
-
-    pprint.pprint(peak_pairs)
-
-    for (idx, peak_pair) in enumerate(peak_pairs):
-        deviation = abs(f(peak_pair[1].rtime) - peak_pair[0])
-        if deviation > max_value:
-            max_value = deviation
-            max_i = idx
-
-    new_peak_pairs = []
-    if max_i > len(peak_pairs) / 2:
-        # on the right hand
-        for i in range(0, max_i):
-            # new_peak_pairs.append( peak_pairs[i] )
-            new_peak_pairs.append((peak_pairs[i][1].rtime, peak_pairs[i][0]))
-        for i in range(max_i, len(peak_pairs)):
-            # new_peak_pairs.append( (peak_pairs[i-1][0], peak_pairs[i][1]) )
-            new_peak_pairs.append((peak_pairs[i][1].rtime, peak_pairs[i - 1][0]))
-
-    else:
-        for i in range(0, max_i):
-            # new_peak_pairs.append( (peak_pairs[i+1][0], peak_pairs[i][1]) )
-            new_peak_pairs.append((peak_pairs[i][1].rtime, peak_pairs[i + 1][0]))
-
-        for i in range(max_i, len(peak_pairs)):
-            # new_peak_pairs.append( peak_pairs[i] )
-            new_peak_pairs.append((peak_pairs[i][1].rtime, peak_pairs[i][0]))
-
-    pprint.pprint(new_peak_pairs)
-    return new_peak_pairs
 
 
 def shift_peak_pairs(peak_pairs, z):
