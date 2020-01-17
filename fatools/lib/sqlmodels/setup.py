@@ -1,5 +1,5 @@
 from fatools.lib.sqlmodels import schema
-from fatools.lib.utils import cout, cerr
+from fatools.lib.utils import cout
 
 
 def setup(session):

@@ -42,7 +42,7 @@ class SampleSetContainer(list):
         assert type(sample_ids) is set, "sample_ids mut be a set type"
         s = self.__class__()
         for sample_set in self:
-            s.append(sample_set.filtered(sample_ids), sample_set)
+            s.append(sample_set.filtered(sample_ids))
         return s
 
     @property

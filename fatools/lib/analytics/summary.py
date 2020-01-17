@@ -1,7 +1,7 @@
 from collections import defaultdict
-import numpy as np
-import sys
 from pprint import pprint
+
+import numpy as np
 
 
 def summarize_alleles(analytical_sets):
@@ -145,8 +145,6 @@ def summarize_bins(analytical_sets):
 
 def plot_alleles(allele_reports, filename, rfu_height=True, dbh=None):
     from matplotlib import pyplot as plt
-    from matplotlib.figure import Figure
-    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
     from matplotlib.ticker import MultipleLocator
 
     marker_ids = set()

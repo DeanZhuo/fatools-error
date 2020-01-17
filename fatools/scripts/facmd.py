@@ -1,8 +1,11 @@
-import sys, argparse, yaml, csv, transaction
-from fatools.lib.utils import cout, cerr, get_dbhandler, set_verbosity, cexit
+import argparse
+import sys
+import transaction
+
 from fatools.lib import params
 from fatools.lib.const import assaystatus, peaktype
 from fatools.lib.fautil import algo
+from fatools.lib.utils import cout, cerr, get_dbhandler, set_verbosity, cexit
 
 
 def init_argparser(parser=None):

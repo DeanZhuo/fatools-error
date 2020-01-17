@@ -1,7 +1,9 @@
-from fatools.lib.analytics.export import export_arlequin
-from fatools.lib.utils import cerr, cout
 from subprocess import call
+
 import numpy as np
+
+from fatools.lib.analytics.export import export_arlequin
+from fatools.lib.utils import cerr
 
 
 # FST calculation using Arlequin

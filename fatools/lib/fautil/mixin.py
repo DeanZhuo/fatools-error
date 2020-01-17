@@ -1,14 +1,16 @@
-from fatools.lib.fautil import traceio, traceutils
-from fatools.lib.utils import cout, cerr
+import io
+import numpy as np
+import time
+from copy import copy
+from functools import lru_cache
+
+from sortedcontainers import SortedListWithKey
+
 from fatools.lib.const import (peaktype, channelstatus, assaystatus, dyes, ladders,
                                allelemethod, alignmethod, binningmethod, scanningmethod)
 from fatools.lib.fautil import algo
-from sortedcontainers import SortedListWithKey
-
-import io, numpy as np
-from copy import copy
-from functools import lru_cache
-import pprint, sys, time
+from fatools.lib.fautil import traceio, traceutils
+from fatools.lib.utils import cerr
 
 
 class PanelMixIn(object):
@@ -446,7 +448,6 @@ class ChannelMixIn(object):
 
     def showladderpca(self):
 
-        import mdp
         from matplotlib import pylab as plt
         import pprint
         import math

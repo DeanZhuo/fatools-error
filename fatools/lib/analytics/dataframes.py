@@ -1,4 +1,4 @@
-from pandas import DataFrame, pivot_table
+from pandas import pivot_table
 
 
 class AlleleDataFrame(object):

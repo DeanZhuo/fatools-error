@@ -1,10 +1,10 @@
 import numpy as np
 from scipy.optimize import minimize, differential_evolution
 
-from fatools.lib.utils import cerr
 from fatools.lib import const
 from fatools.lib.fautil.alignutils import (estimate_z, pair_f, align_dp,
-                                           pair_sized_peaks, DPResult, AlignResult, generate_similarity, plot)
+                                           pair_sized_peaks, AlignResult, generate_similarity, plot)
+from fatools.lib.utils import cerr
 
 
 class ZFunc(object):
@@ -155,7 +155,7 @@ def align_gm(peaks, ladder, anchor_pairs, z=None):
     zresult = results[0]
 
     # last dp   zres = align_dp(self.rtimes, self.sizes, zresult.z, zresult.rss, order)
-    dp_result = align_dp(f.rtimes, f.sizes, zresult.z, zresult.rss)
+    dp_result = align_dp(rtimes=f.rtimes, sizes=f.sizes, z=zresult.z, rss=zresult.rss)
     # import pprint; pprint.pprint(dp_result.sized_peaks)
     # plot(f.rtimes, f.sizes, dp_result.z, [(x[1], x[0]) for x in dp_result.sized_peaks])
 
@@ -226,7 +226,7 @@ def align_de(peaks, ladder, initial_pair=None):
     zres = results[0]
 
     # last dp
-    dp_result = align_dp(f.rtimes, f.sizes, zres.z, zres.rss)
+    dp_result = align_dp(rtimes=f.rtimes, sizes=f.sizes, z=zres.z, rss=zres.rss)
     # plot(f.rtimes, f.sizes, dp_result.z, [(x[1], x[0]) for x in dp_result.sized_peaks])
     # import pprint; pprint.pprint(dp_result.sized_peaks)
 

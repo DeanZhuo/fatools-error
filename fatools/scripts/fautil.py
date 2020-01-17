@@ -1,4 +1,5 @@
-import sys, argparse, yaml, os
+import argparse
+import os
 
 from fatools.lib.utils import cout, cerr, cexit, get_dbhandler
 
@@ -97,7 +98,6 @@ def do_analyze(args):
     """
 
     from fatools.lib.fautil.traceio import read_abif_stream
-    from fatools.lib.fautil.traceutils import separate_channels
     from fatools.lib.fsmodels.models import Assay, Marker, Panel
     from fatools.lib import params
 

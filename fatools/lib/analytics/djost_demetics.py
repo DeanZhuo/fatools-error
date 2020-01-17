@@ -1,9 +1,9 @@
-from fatools.lib.analytics.export import export_demetics
-from fatools.lib.utils import cerr, cout, random_string
-from subprocess import call
+import datetime
+import os
 from collections import defaultdict
-import numpy as np
-import datetime, os
+from subprocess import call
+
+from fatools.lib.analytics.export import export_demetics
 
 
 def run_demetics(analytical_sets, dbh, tmp_dir, mode='d.jost'):

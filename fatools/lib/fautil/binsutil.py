@@ -1,10 +1,12 @@
-import pandas, attr, yaml
-import numpy as np
-from fatools.lib.fautil.mixin import BinMixIn
-from fatools.lib.utils import cout, cerr
 from collections import defaultdict
 
-from IPython import embed
+import attr
+import numpy as np
+import pandas
+import yaml
+
+from fatools.lib.fautil.mixin import BinMixIn
+from fatools.lib.utils import cout, cerr
 
 
 def do_binsutil(args):

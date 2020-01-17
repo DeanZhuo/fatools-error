@@ -1,8 +1,9 @@
-from fatools.lib.fautil import dpalign as dp
-from fatools.lib.const import *
-from fatools.lib.utils import cout, cerr
+import pprint
+
 import numpy as np
-import pprint, sys
+
+from fatools.lib.fautil import dpalign as dp
+from fatools.lib.utils import cerr
 
 
 def fast_align(trace, initial_peaks, avg_height, ladders, all_peaks):
