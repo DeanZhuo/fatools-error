@@ -1,7 +1,6 @@
-import numpy as np
 import math
-import pprint
 
+import numpy as np
 from matplotlib import pylab as plt
 
 

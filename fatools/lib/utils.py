@@ -1,4 +1,7 @@
-import sys, base64, os, math
+import base64
+import math
+import os
+import sys
 
 
 def cout(s, nl=True, flush=False):
@@ -88,7 +91,6 @@ def acquire_R():
     if _R_lock_ is None:
         # initialize rpy2 and set thread lock
 
-        from rpy2 import robjects
         from rpy2.robjects import pandas2ri
         import threading
 

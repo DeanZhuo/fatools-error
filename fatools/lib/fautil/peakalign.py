@@ -1,9 +1,10 @@
-from fatools.lib.utils import cout, cerr
-from fatools.lib.const import alignmethod
-from fatools.lib.fautil import dpalign as dp
+import pprint
 
 import numpy as np
-import pprint
+
+from fatools.lib.const import alignmethod
+from fatools.lib.fautil import dpalign as dp
+from fatools.lib.utils import cerr
 
 cdbg = cerr
 

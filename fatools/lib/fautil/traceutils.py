@@ -1,6 +1,5 @@
-from math import factorial
-import numpy as np
 import attr
+import numpy as np
 from scipy import ndimage, signal, optimize
 from scipy.signal import find_peaks_cwt
 

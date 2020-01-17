@@ -1,7 +1,8 @@
 from collections import defaultdict
-from fatools.lib.analytics.dataframes import AlleleDataFrame
+
 from pandas import pivot_table
-from pprint import pprint
+
+from fatools.lib.analytics.dataframes import AlleleDataFrame
 
 
 class AnalyticalSet(object):

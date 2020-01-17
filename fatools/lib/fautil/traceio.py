@@ -10,12 +10,12 @@ http://www.gnu.org/licenses/gpl.html
 
 __version__ = '20081006a'
 
-import struct
-import bisect
-import sys, os
-import numpy as np
-import re
 import datetime
+import struct
+import sys
+
+import numpy as np
+
 from .traceutils import smooth_signal, correct_baseline
 
 DEBUG = False

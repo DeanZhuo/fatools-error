@@ -57,10 +57,10 @@ def wavelen2rgb(Wavelength, MaxIntensity=100):
     whose code is what Glynn's code is based on.
 
     Example:
-    >>> from wavelen2rgb import wavelen2rgb
-    >>> waves = [300.0, 400.0, 600.0]
-    >>> rgb = [wavelen2rgb(waves[i], MaxIntensity=255) for i in range(3)]
-    >>> print rgb
+    # >>> from wavelen2rgb import wavelen2rgb
+    # >>> waves = [300.0, 400.0, 600.0]
+    # >>> rgb = [wavelen2rgb(waves[i], MaxIntensity=255) for i in range(3)]
+    # >>> print rgb
     [[0, 0, 0], [131, 0, 181], [255, 190, 0]]
     """
 

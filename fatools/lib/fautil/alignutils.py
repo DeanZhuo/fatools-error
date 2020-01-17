@@ -1,9 +1,10 @@
-from fatools.lib.utils import cerr, cout
-from fatools.lib.fautil.dpalign import dp
-
-import numpy as np
-import attr
 import math
+
+import attr
+import numpy as np
+
+from fatools.lib.fautil.dpalign import dp
+from fatools.lib.utils import cerr
 
 
 @attr.s

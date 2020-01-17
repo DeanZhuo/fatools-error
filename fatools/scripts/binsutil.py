@@ -1,8 +1,6 @@
-import sys, argparse
+import argparse
 
 # get the helpers
-
-from fatools.scripts.dbmgr import get_assay_list
 
 
 def init_argparser(parser=None):

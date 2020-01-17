@@ -72,8 +72,6 @@ def adaptive_align_naive_2(trace, peaks, avg_height, ladders):
 
     data = trace
 
-    from matplotlib import pylab as plt
-
     pprint.pprint(peaks)
 
     dp_results = []
@@ -216,8 +214,6 @@ def adaptive_align_dtw(trace, peaks, avg_height, ladders):
     ## TRY 1 -> use DTW
 
     from mlpy import dtw_std
-    from matplotlib import pylab as plt
-    from dtw import dtw
 
     peak_corr = {}
     for p in peaks:
@@ -232,7 +228,8 @@ def adaptive_align_dtw(trace, peaks, avg_height, ladders):
 
             dist, cost, path = dtw_std(standard_peaks, data, dist_only=False, squared=True)
             plot_path(standard_peaks, data, path, [p[0] for p in peak_index])
-            # dist, cost, path = dtw( standard_peaks, data )
+            # dist, cost, path
+            # = dtw( standard_peaks, data )
 
             # fill peak correlation based on path
 
@@ -418,8 +415,6 @@ def generate_peaks(peaks, height, min_range, max_range):
     N = max_range + 50 * ratio
     x = np.linspace(0, N, N)
     print(N, ratio)
-
-    from matplotlib import pylab as plt
 
     arrays = []
     peak_index = []

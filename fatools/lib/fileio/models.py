@@ -4,11 +4,12 @@
 #
 
 
-from fatools.lib.utils import cout, cerr
-from fatools.lib.fautil.mixin2 import MarkerMixIn, PanelMixIn, ChannelMixIn, FSAMixIn, AlleleMixIn
-from fatools.lib import const
+import os
+import pickle
 
-import os, pickle
+from fatools.lib import const
+from fatools.lib.fautil.mixin2 import MarkerMixIn, PanelMixIn, ChannelMixIn, FSAMixIn, AlleleMixIn
+from fatools.lib.utils import cerr
 
 
 class Marker(MarkerMixIn):

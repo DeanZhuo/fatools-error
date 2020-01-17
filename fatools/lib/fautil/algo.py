@@ -1,21 +1,13 @@
-import numpy as np
 import math
+import pickle
 
-from scipy.signal import find_peaks_cwt
-from scipy.optimize import leastsq, curve_fit
+import numpy as np
 from scipy.interpolate import UnivariateSpline
-
-from fatools.lib.const import peaktype, binningmethod, allelemethod
-from fatools.lib.fautil.dpalign import estimate_z, align_peaks, plot_z
-from fatools.lib.utils import cout, cerr, cverr
-
-import fatools.lib.fautil.peakalign as pa
-
 from sortedcontainers import SortedListWithKey
 
-import pprint, sys, pickle
-from matplotlib import pylab as plt
-from bisect import bisect_left
+import fatools.lib.fautil.peakalign as pa
+from fatools.lib.const import peaktype, binningmethod, allelemethod
+from fatools.lib.utils import cerr, cverr
 
 
 def find_raw_peaks(raw_data, params):

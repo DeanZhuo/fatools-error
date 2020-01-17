@@ -1,9 +1,8 @@
-from fatools.lib.fautil import algo2 as algo
-from fatools.lib.utils import cout, cerr, cexit
-from fatools.lib import const
-
-import attr
 import time
+
+from fatools.lib import const
+from fatools.lib.fautil import algo2 as algo
+from fatools.lib.utils import cout, cerr
 
 
 # FA

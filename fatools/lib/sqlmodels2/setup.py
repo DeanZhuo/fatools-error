@@ -1,5 +1,5 @@
-from fatools.lib.utils import cout, cerr
 from fatools.lib.params import default_markers, default_panels
+from fatools.lib.utils import cerr
 
 
 def setup(dbh):

@@ -1,7 +1,9 @@
-import sys, os
-from fatools.lib.utils import cout, cerr
+import os
+import sys
+
 from fatools.lib.sqlmodels.handler_interface import base_sqlhandler
 from fatools.lib.sqlmodels2 import schema
+from fatools.lib.utils import cerr
 
 
 class SQLHandler(base_sqlhandler):

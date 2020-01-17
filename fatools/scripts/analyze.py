@@ -3,12 +3,13 @@
 # commands that need to update/change the database content should be in facmd toolset
 #
 
-import sys, argparse, yaml
+import argparse
+import yaml
+from pprint import pprint
 
+from fatools.lib import params
 from fatools.lib.analytics.query import Query, load_yaml
 from fatools.lib.utils import cout, cerr, cexit, get_dbhandler
-from fatools.lib import params
-from pprint import pprint
 
 
 def init_argparser(parser=None):

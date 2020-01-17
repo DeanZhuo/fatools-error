@@ -1,10 +1,10 @@
 import yaml
-from fatools.lib.utils import cerr, cout
-from fatools.lib.analytics.selector import Selector, Filter
+from pandas import DataFrame
+
 from fatools.lib.analytics.analyticalset import get_analytical_sets
 from fatools.lib.analytics.haploset import get_haplotype_sets
-from pandas import DataFrame
-from pprint import pprint
+from fatools.lib.analytics.selector import Selector, Filter
+from fatools.lib.utils import cerr
 
 
 def load_yaml(yaml_text):

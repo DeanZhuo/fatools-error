@@ -1,19 +1,17 @@
 # re-imagining the peakutils
 
-import numpy as np
-
-from scipy.signal import find_peaks_cwt
-from scipy.optimize import leastsq, curve_fit
-from scipy.interpolate import UnivariateSpline
-
-from matplotlib import pyplot as plt
-
 from bisect import bisect_left
 from operator import itemgetter
 from pprint import pprint
 
-from ..dpalign import align_peaks, estimate_z
+import numpy as np
+from matplotlib import pyplot as plt
+from scipy.interpolate import UnivariateSpline
+from scipy.optimize import curve_fit
+from scipy.signal import find_peaks_cwt
+
 from .models import *
+from ..dpalign import align_peaks, estimate_z
 from ..traceutils import smooth_signal
 from ...params import LadderScanningParameter, ScanningParameter
 
@@ -118,8 +116,8 @@ def peak_fit_and_align(simple_fits, ladders):
     for (initial_z, initial_rss, initial_peaks, height, paired_peaks) in simple_fits[:6]:
         print('=> initial RSS: %3.3f' % initial_rss)
         dp_score, dp_rss, dp_z, dp_peaks, S, D = align_peaks(ladders,
-                                                             initial_peaks,
-                                                             initial_z=initial_z)
+                                                             peaks=initial_peaks,
+                                                             z=initial_z, rss=initial_rss)
         dp_fits.append((dp_score, dp_rss, dp_z, dp_peaks, initial_peaks, height, S, D, paired_peaks))
 
     dp_fits.sort(key=itemgetter(1))
@@ -387,7 +385,7 @@ def scan_ladder_peaks_xxx(channel, ladders, parameter=None):
     best_fits.sort(key=itemgetter(0))
     optimal_rss, optimal_z, optimal_peaks, min_height, proper_peaks = best_fits[0]
 
-    dp_rss, dp_z, dp_peaks = align_peaks(ladders, proper_peaks, optimal_peaks)
+    dp_rss, dp_z, dp_peaks = align_peaks(ladders, proper_peaks, optimal_peaks, optimal_rss)
 
     if dp_rss < optimal_rss:
         optimal_rss, optimal_z, optimal_peaks = dp_rss, dp_z, dp_peaks
@@ -474,7 +472,7 @@ def adaptive_peak_alignment(ladders, peaks):
 
         # perform dynamic programming alignment
 
-        dp_score, dp_rss, dp_z, dp_peaks, S, D = align_peaks(ladders, peaks, aligned_peaks)
+        dp_score, dp_rss, dp_z, dp_peaks, S, D = align_peaks(ladders, peaks, aligned_peaks, rss)
         if dp_rss < rss:
             print(' => DP alignment replaced RSS: %3.2f -> %3.2f' % (rss, dp_rss))
         dp_results.append((dp_score, dp_rss, dp_z, dp_peaks))
@@ -1374,7 +1372,7 @@ def scan_ladder_peak_2(channel, ladder, parameter=None, find_peaks=True):
     results = []
 
     for peak_set in peak_sets:
-        results.append(align_ladder_peaks(peak_set, ladder, parameter))
+        results.append(align_ladder_peaks(peak_set, ladder))
 
         # find similarity using PCA-based similarity
 

@@ -1,13 +1,15 @@
 # provide commands for Fragment Analysis (FA)
+import argparse
+import csv
+import os
 import sys
+import yaml
+from io import StringIO
 
 import transaction
 
 from fatools.lib import params
-from fatools.lib.utils import cerr, cout, cverr, cexit, tokenize, detect_buffer, set_verbosity, get_dbhandler
-
-import argparse, yaml, csv, os
-from io import StringIO
+from fatools.lib.utils import cerr, cverr, cexit, tokenize, detect_buffer, set_verbosity, get_dbhandler
 
 
 def init_argparser(parser=None):

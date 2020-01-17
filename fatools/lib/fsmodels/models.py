@@ -132,7 +132,7 @@ class Channel(base, ChannelMixIn, AlleleSetMixIn):
                    type, method):
         allele = Allele(rtime=rtime, height=height, area=area,
                         brtime=brtime, ertime=ertime, wrtime=wrtime, srtime=srtime,
-                        beta=beta, theta=theta, type=type, method=method)
+                        beta=beta, delta=theta, type=type, method=method)
         allele.alleleset = self
 
         return allele

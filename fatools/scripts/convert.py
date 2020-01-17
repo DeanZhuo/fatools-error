@@ -1,11 +1,10 @@
-import sys
+import argparse
 import argparse
 import csv
 from collections import defaultdict
 
-from fatools.lib.utils import cout, cerr, cexit, get_dbhandler
 from fatools.lib.fautil.traceio import read_abif_stream
-from pprint import pprint
+from fatools.lib.utils import cerr, cexit, get_dbhandler
 
 
 def init_argparser(parser=None):

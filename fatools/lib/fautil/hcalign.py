@@ -1,17 +1,17 @@
 # hclustalign.py
 # perform hierarchical clustering
 
-from fatools.lib.utils import cerr, cverr, cexit
+import operator
+from collections import defaultdict
+from functools import reduce
+
+import attr
+from scipy.cluster.hierarchy import linkage, fcluster
+
 from fatools.lib import const
 from fatools.lib.fautil.alignutils import (estimate_z, AlignResult, align_dp,
                                            pair_sized_peaks, generate_similarity)
-
-from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
-from collections import defaultdict
-from functools import reduce
-import operator
-import numpy as np
-import attr
+from fatools.lib.utils import cverr
 
 
 @attr.s

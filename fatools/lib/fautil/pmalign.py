@@ -2,15 +2,15 @@
 pair minimization algorithm
 """
 
-import numpy as np
 import itertools
-from scipy.optimize import minimize
 
-from fatools.lib.utils import cout, cerr, cverr, is_verbosity
-from fatools.lib.fautil.alignutils import (estimate_z, pair_f, align_dp,
-                                           pair_sized_peaks, DPResult, AlignResult, plot)
-from fatools.lib.fautil.gmalign import ZFunc, align_gm
+import numpy as np
+
 from fatools.lib import const
+from fatools.lib.fautil.alignutils import (estimate_z, align_dp,
+                                           AlignResult, plot)
+from fatools.lib.fautil.gmalign import ZFunc, align_gm
+from fatools.lib.utils import cverr, is_verbosity
 
 ANCHOR_RTIME_LOWER_BOUND = 1400
 ANCHOR_RTIME_UPPER_BOUND = 5000
@@ -92,7 +92,7 @@ def align_pm(peaks, ladder, anchor_pairs=None):
             rss = zres.rss
             cverr(5, rss)
 
-    dp_result = align_dp(f.rtimes, f.sizes, last_z, last_rss)
+    dp_result = align_dp(rtimes=f.rtimes, sizes=f.sizes, z=last_z, rss=last_rss)
 
     return align_gm2(peaks, ladder, anchor_pairs, dp_result.z)
 

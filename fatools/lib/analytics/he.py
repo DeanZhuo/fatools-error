@@ -1,4 +1,3 @@
-import numpy as np
 from pandas import DataFrame
 from scipy.stats import wilcoxon, kruskal
 

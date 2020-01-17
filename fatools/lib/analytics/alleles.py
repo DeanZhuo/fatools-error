@@ -3,6 +3,7 @@ from collections import defaultdict
 import numpy as np
 
 from fatools.lib.analytics.summary import check_delta
+from fatools.lib.sqlmodels.schema import Marker
 
 
 def summarize_alleles(allele_df):
